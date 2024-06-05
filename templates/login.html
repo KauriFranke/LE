@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylecd.css') }}">
+    <title>Criação de Conta</title>
+</head>
+<body>
+    <div class="site">
+        <img class="backgroundsite"
+                src="static/img/LE background.png"
+                alt="teste"
+                />
+        <img class="LeLogoNome"
+                src="static/img/LeLogoNome.png"
+                alt="teste"
+                />        
+                <div class="estrutura">
+                    <div class="caixapreta">
+                        <form method="POST" action="/cadastrar">
+                            <div class="boa">
+                            <h1>Boas-Vindas ao Legado dos Elementos!</h1>
+                            </div>
+            
+                            <div class="usuario">
+                                <label for="email">Email:</label><br>
+                                <input class="barraemail" type="email" id="email" name="email" required><br><br>
+                            </div>    
+
+                            <div class="senha">
+                                <label for="senha">Senha:</label><br>
+                                <input class="barrasenha" type="password" id="senha" name="senha" required><br><br>
+                            </div>
+
+                            <div class="botaoentrar">
+                                <button class="loginbotao" type="submit">
+                                    <div class="entrar">Entrar</div>
+                                </button>    
+                            </div>
+                            <div class="criarconta">
+                                <span> Não tem conta?</span>
+                                <div>
+                                    <button class="botaocriar" type="button">
+                                        <div>
+                                            Registre-se
+                                        </div>
+
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>    
+                </div>
+    </div>
+</body>
+</html>
