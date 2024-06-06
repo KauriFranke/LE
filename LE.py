@@ -1,4 +1,5 @@
 from flask import Flask, render_template, url_for
+import pyodbc
 
 app = Flask(__name__)
 
@@ -19,6 +20,10 @@ def livro():
 @app.route("/login")
 def login():
     return render_template("login.html")
+
+@app.route("/criarconta")
+def criarconta():
+    return render_template("criarconta.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
