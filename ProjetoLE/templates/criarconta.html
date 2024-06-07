@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylelogin.css') }}">
-    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleregistro.css') }}">
+    <title>Criação de Conta</title>
 </head>
 <body>
     <div class="site">
@@ -20,7 +20,7 @@
                     <div class="caixapreta">
                         <form method="POST" action="/cadastrar">
                             <div class="boa">
-                            <h1>Boas-Vindas ao Legado dos Elementos!</h1>
+                            <h1>Boas-Vindas!</h1>
                             </div>
             
                             <div class="usuario">
@@ -33,21 +33,15 @@
                                 <input class="barrasenha" type="password" id="senha" name="senha" required><br><br>
                             </div>
 
-                            <div class="botaoentrar">
-                                <a class="loginbotao" type="submit">
-                                    <div class="entrar">Entrar</div>
-                                </a>    
+                            <div class="confirmarsenha">
+                                <label for="senha">Confirme a Senha:</label><br>
+                                <input class="barrasenha" type="password" id="senha" name="senha" required><br><br>
                             </div>
-                            <div class="criarconta">
-                                <span> Não tem conta?</span>
-                                <div>
-                                    <a href="http://127.0.0.1:5000/criarconta"class="botaocriar">
-                                        <div>
-                                            Registre-se
-                                        </div>
 
-                                    </a>
-                                </div>
+                            <div class="botaoentrar">
+                                <button class="loginbotao" type="submit">
+                                    <div class="entrar">Criar Conta</div>
+                                </button>    
                             </div>
                         </form>
                     </div>    
