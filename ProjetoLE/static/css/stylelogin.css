@@ -13,7 +13,7 @@ h1 {
 .LeLogoNome {
     position: relative;
     top: 100px;
-    left: 43%;
+    left: 42%;
     height: 200px;
     width: 300px;
 }
@@ -81,8 +81,7 @@ h1 {
     align-items: center;
     color: white;
     background-color: #0893d9;
-    border-radius: 5px;
-    width: 50%;
+    width: 200px;
     height: 40px;
 }
 .criarconta {
@@ -95,8 +94,14 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 100%;
+    height: 40px;
+    width: 200px;
+    background-color: #0893d9;
+    border: none;
+    border-radius: 5px;
+}
+.loginbotao :hover {
+    cursor: pointer;    
 }
 .botaocriar {
     text-decoration: underline;

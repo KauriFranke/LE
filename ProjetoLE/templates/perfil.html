@@ -2,13 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Perfil</title>
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styleperfil.css') }}"">
 </head>
 <body>
-
-    <p>Perfil Do Seu Ze</p>
-
-    <a href=" http://127.0.0.1:5000/ "> HomePage</a>
-
+    <img class="backgroundsite" src="{{ url_for('static', filename='img/LE background.png') }}" alt="Background Image" />
+    <header>
+        <div class="logo">
+            <img class="LeLogoNome" src="{{ url_for('static', filename='img/LeLogoNome.png') }}" alt="Logo" />  
+            <span></span>
+        </div>
+        <div class="tdheader">
+            <div class="links">
+                
+                <div><a href="#">Mundo</a></div>
+                <div><a href="#">Wiki</a></div>
+                <div><a href="#">Comunidade</a></li></div>
+                <div><a href="#">Contato</a></li></div>
+                
+            </div>
+        
+            <div class="headerbuttons">
+                <div>
+                    <a href="{{ url_for('main.logout') }}">
+                    <button class="logout">Log out</button>
+                    </a>
+                </div>
+                <div>
+                    <button class="play">PLAY</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="site">
+            <h1>Bem Vindo {{ name }} !</h1>
+            <p>AAAAAAAAAAAAAAAAAAAAAAAA</p>
+        </div>
+    </main>
 </body>
 </html>

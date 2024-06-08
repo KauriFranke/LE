@@ -4,48 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device, initial-scale=1.0" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styleregistro.css') }}">
-    <title>Criação de Conta</title>
+    <title>Registro</title>
 </head>
 <body>
     <div class="site">
-        <img class="backgroundsite"
-                src="static/img/LE background.png"
-                alt="teste"
-                />
-        <img class="LeLogoNome"
-                src="static/img/LeLogoNome.png"
-                alt="teste"
-                />        
-                <div class="estrutura">
-                    <div class="caixapreta">
-                        <form method="POST" action="/cadastrar">
-                            <div class="boa">
-                            <h1>Boas-Vindas!</h1>
-                            </div>
-            
-                            <div class="usuario">
-                                <label for="email">Email:</label><br>
-                                <input class="barraemail" type="email" id="email" name="email" required><br><br>
-                            </div>    
+        <img class="backgroundsite" src="{{ url_for('static', filename='img/LE background.png') }}" alt="Background Image" />
+        <img class="LeLogoNome" src="{{ url_for('static', filename='img/LeLogoNome.png') }}" alt="Logo" />        
+        <div class="estrutura">
+            <div class="caixapreta">
+                <form method="POST" action="{{ url_for('main.register') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="boa">
+                        <h1>Crie Sua Conta!</h1>
+                    </div>
 
-                            <div class="senha">
-                                <label for="senha">Senha:</label><br>
-                                <input class="barrasenha" type="password" id="senha" name="senha" required><br><br>
-                            </div>
-
-                            <div class="confirmarsenha">
-                                <label for="senha">Confirme a Senha:</label><br>
-                                <input class="barrasenha" type="password" id="senha" name="senha" required><br><br>
-                            </div>
-
-                            <div class="botaoentrar">
-                                <button class="loginbotao" type="submit">
-                                    <div class="entrar">Criar Conta</div>
-                                </button>    
-                            </div>
-                        </form>
+                    <div class="usuario">
+                        <label for="username">Nome de Usuário:</label><br>
+                        {{ form.username(class="barrausername", id="username") }}<br><br>
+                    </div>
+                    
+                    <div class="usuario">
+                        <label for="email">Email:</label><br>
+                        {{ form.email(class="barraemail", id="email") }}<br><br>
                     </div>    
-                </div>
+
+                    <div class="senha">
+                        <label for="senha">Senha:</label><br>
+                        {{ form.password(class="barrasenha", id="senha") }}<br><br>
+                    </div>
+
+                    <div class="senha">
+                        <label for="confirm_password">Confirme a Senha:</label><br>
+                        {{ form.confirm_password(class="barrasenha", id="confirm_password") }}<br><br>
+                    </div>
+
+                    <div class="botaoentrar">
+                        <button class="loginbotao" type="submit">
+                            <div class="entrar">Registrar</div>
+                        </button>    
+                    </div>
+                    <div class="criarconta">
+                        <span> Já tem uma conta?</span>
+                        <div>
+                            <a href="{{ url_for('main.login') }}" class="botaocriar">
+                                <div>Login</div>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>    
+        </div>
     </div>
 </body>
 </html>

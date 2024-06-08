@@ -37,11 +37,12 @@ h1 {
 }
 .caixapreta {
 
-    background-color: #313338;
+    background-color: #1f1e1e;
     color: #b0b5bc;
     border-radius: 10px;
-    height: 350px;
-    width: 750px;
+    height: 460px;
+    width: 700px;
+    opacity: 0.8;
 }
 .boa {
     display: flex;
@@ -49,13 +50,18 @@ h1 {
     color: whitesmoke;
 }
 .usuario{
-    padding-left: 175px;
+    padding-left: 150px;
 }
 .senha{
-    padding-left: 175px;
+    padding-left: 150px;
 }
 .confirmarsenha{
-    padding-left: 175px;
+    padding-left: 150px;
+}
+.barrausername{
+    height: 30px;
+    width: 400px;
+    border-radius: 5px;
 }
 .barraemail{
     height: 30px;
@@ -68,7 +74,7 @@ h1 {
     border-radius: 5px;
 }
 .botaoentrar {
-    padding-left: 225px;
+    padding-left: 200px;
 }
 .entrar{
     color: white;
@@ -84,7 +90,11 @@ h1 {
     height: 30px;
     width: 300px;
     border-radius: 5px;
-    background-color: #5865f2;
+    background-color: #0893d9;
+    border: none;
+}
+.loginbotao :hover {
+    cursor: pointer;    
 }
 .botaocriar {
     text-decoration: underline;
