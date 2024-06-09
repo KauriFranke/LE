@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criação de Personagem</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylecp.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Selecione o Ancestral</h1>
+            <p>Seu Ancestral influencia suas habilidades inerentes e ações.</p>
+        </header>
+        <div class="kind-selection">
+            <div class="kind-card">
+                <img src="{{ url_for('static', filename='img/anjo.png') }}" alt="anjo">
+                <h2>Angelical</h2>
+                <p>Orgulhoso, asdasd, adsads</p>
+            </div>
+            <div class="kind-card">
+                <img src="{{ url_for('static', filename='img/besset.png') }}" alt="Besset">
+                <h2>Besset</h2>
+                <p>asdsads, adssadasd, adsdasads</p>
+            </div>
+            <div class="kind-card">
+                <img src="{{ url_for('static', filename='img/dyr.png') }}" alt="Dyr">
+                <h2>Dyr</h2>
+                <p>asdadsdas, adsasdasdsad, dasasdasd</p>
+            </div>
+            <!-- Adicione mais cards conforme necessário -->
+        </div>
+        <div class="actions">
+            <button id="backButton">Voltar</button>
+            <button id="selectButton">Selecionar</button>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+body {
+    background-color: #1a1a2e;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    max-width: 1200px;
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+.kind-selection {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.kind-card {
+    background-color: #0f3460;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: 200px;
+    transition: transform 0.3s;
+}
+
+.kind-card img {
+    width: 100px;
+    height: 100px;
+}
+
+.kind-card h2 {
+    margin: 10px 0;
+}
+
+.kind-card:hover {
+    transform: scale(1.05);
+}
+
+.actions {
+    margin-top: 20px;
+}
+
+.actions button {
+    background-color: #e94560;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.actions button:hover {
+    background-color: #0f3460;
+}

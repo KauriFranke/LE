@@ -48,3 +48,7 @@ def profile():
 @main.route('/homepage')
 def homepage ():
     return render_template('homepage.html')
+
+@main.route('/criarpersonagem')
+def criarpersonagem():
+    return render_template('criarpersonagem.html')
