@@ -38,6 +38,17 @@
         <div class="site">
             <h1>Bem Vindo {{ name }} !</h1>
             <p>AAAAAAAAAAAAAAAAAAAAAAAA</p>
+        
+            <div class="criarpersonagem">
+                <h2>Your Profile</h2>
+                <h3>Your Characters</h3>
+                <ul>
+                    {% for character in characters %}
+                        <li>{{ character.name }} - {{ character.class_name }} (Level: {{ character.level }})</li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('main.criarpersonagem') }}">Create a new character</a>
+            </div>
         </div>
     </main>
 </body>
