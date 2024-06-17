@@ -2,39 +2,123 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criação de Personagem</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylecp.css') }}">
+    <title>Create Character</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylecp.css') }}"">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Selecione o Ancestral</h1>
-            <p>Seu Ancestral influencia suas habilidades inerentes e ações.</p>
-        </header>
-        <div class="kind-selection">
-            <div class="kind-card">
-                <img src="{{ url_for('static', filename='img/anjo.png') }}" alt="anjo">
+    <div class="navbar">
+        <a href="#ancestral" onclick="showSection('ancestral')">Ancestral</a>
+        <a href="#sub-ancestral" onclick="showSection('sub-ancestral')">Sub-Ancestral</a>
+        <a href="#estilo" onclick="showSection('estilo')">Estilo</a>
+        <a href="#classe" onclick="showSection('classe')">Classe</a>
+        <a href="#sub-classe" onclick="showSection('sub-classe')">Sub-Classe</a>
+        <a href="#guilda" onclick="showSection('guilda')">Guilda</a>
+    </div>
+
+    <div id="ancestral-section" class="hidden">
+        <h1>Select Ancestral</h1>
+        <div class="card-container" id="ancestral-cards">
+            <div class="card" data-ancestral="Angelical">
+                <img src="{{ url_for('static', filename='img/ano.png')}}" alt="Angelical">
                 <h2>Angelical</h2>
-                <p>Orgulhoso, asdasd, adsads</p>
+                <p>Proud, etc.</p>
             </div>
-            <div class="kind-card">
-                <img src="{{ url_for('static', filename='img/besset.png') }}" alt="Besset">
+            <div class="card" data-ancestral="Besset">
+                <img src="{{ url_for('static', filename='img/besset.png')}}" alt="Besset">
                 <h2>Besset</h2>
-                <p>asdsads, adssadasd, adsdasads</p>
+                <p>Strong, etc.</p>
             </div>
-            <div class="kind-card">
-                <img src="{{ url_for('static', filename='img/dyr.png') }}" alt="Dyr">
+            <div class="card" data-ancestral="Dyr">
+                <img src="{{ url_for('static', filename='img/dyr.png')}}" alt="Dyr">
                 <h2>Dyr</h2>
-                <p>asdadsdas, adsasdasdsad, dasasdasd</p>
+                <p>Fierce, etc.</p>
             </div>
-            
-        </div> 
-    
-        <div class="actions">
-            <button id="backButton">Voltar</button>
-            <button id="selectButton">Selecionar</button>
+            <div class="card" data-ancestral="Elare">
+                <img src="elare.png" alt="Elare">
+                <h2>Elare</h2>
+                <p>Fierce, etc.</p>
+            </div>
+            <div class="card" data-ancestral="Humano">
+                <img src="humano.png" alt="Humano">
+                <h2>Humano</h2>
+                <p>Fierce, etc.</p>
+            </div>
+            <div class="card" data-ancestral="Metamorfo">
+                <img src="metamorfo.png" alt="Metamorfo">
+                <h2>Metamorfo</h2>
+                <p>Fierce, etc.</p>
+            </div>
+            <div class="card" data-ancestral="Oni">
+                <img src="oni.png" alt="Oni">
+                <h2>Oni</h2>
+                <p>Fierce, etc.</p>
+            </div>
+            <div class="card" data-ancestral="Ogros">
+                <img src="ogros.png" alt="Ogros">
+                <h2>Ogros</h2>
+                <p>Fierce, etc.</p>
+            </div>
+            <div class="card" data-ancestral="Constructo">
+                <img src="constructo.png" alt="Constructo">
+                <h2>Constructo</h2>
+                <p>Fierce, etc.</p>
+            </div>
         </div>
-        
+        <button id="next-button-ancestral" class="button hidden">Next</button>
+    </div>
+
+    <div id="sub-ancestral-section" class="hidden">
+        <h1>Select Sub-Ancestral</h1>
+        <div class="card-container" id="sub-ancestral-cards"></div>
+        <button id="confirm-button-sub-ancestral" class="button hidden" disabled>Confirm Select</button>
+    </div>
+
+    <div id="estilo-section" class="hidden">
+        <h1>Select Estilo</h1>
+        <div class="card-container" id="estilo-cards">
+            <div class="card" data-estilo="Corpo-a-Corpo">
+                <img src="{{ url_for('static', filename='img/corpo-a-corpo.png')}}" alt="Corpo-a-Corpo">
+                <h2>Corpo-a-Corpo</h2>
+                <p>Especializado em combate próximo.</p>
+            </div>
+            <div class="card" data-estilo="Distancia">
+                <img src="{{ url_for('static', filename='img/distancia.png')}}" alt="Distancia">
+                <h2>Distância</h2>
+                <p>Especializado em ataques à distância.</p>
+            </div>
+            <div class="card" data-estilo="Magico">
+                <img src="{{ url_for('static', filename='img/magico.png')}}" alt="Magico">
+                <h2>Mágico</h2>
+                <p>Especializado em magia e feitiços.</p>
+            </div>
+        </div>
+        <button id="next-button-estilo" class="button hidden">Next</button>
+    </div>
+
+    <div id="class-section" class="hidden">
+        <h1>Select Class</h1>
+        <div class="card-container" id="classe-cards">
+            <!-- Adicione cards de classes aqui -->
+        </div>
+        <button id="confirm-button-classe" class="button hidden" disabled>Confirm Select</button>
+    </div>
+
+    <div id="sub-class-section" class="hidden">
+        <h1>Select Sub-Class</h1>
+        <div class="card-container" id="sub-class-cards">
+            <!-- Adicione cards de sub-classes aqui -->
+        </div>
+        <button id="confirm-button-sub-classe" class="button hidden" disabled>Confirm Select</button>
+    </div>
+
+    <div id="guilda-section" class="hidden">
+        <h1>Select Guilda</h1>
+        <div class="card-container" id="guilda-cards">
+            <!-- Adicione cards de guildas aqui -->
+        </div>
+        <button id="confirm-button-guilda" class="button hidden" disabled>Confirm Select</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

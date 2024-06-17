@@ -44,7 +44,9 @@
                 <h3>Your Characters</h3>
                 <ul>
                     {% for character in characters %}
-                        <li>{{ character.name }} - {{ character.class_name }} (Level: {{ character.level }})</li>
+                        <li>
+                            {{ character.name }}
+                        </li>
                     {% endfor %}
                 </ul>
                 <a href="{{ url_for('main.criarpersonagem') }}">Create a new character</a>

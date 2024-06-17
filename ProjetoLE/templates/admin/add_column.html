@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Column - Admin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add Column</h1>
+        <form method="POST" action="{{ url_for('admin_panel.add_column') }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.table_name.label(class="form-label") }}
+                {{ form.table_name(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.column_name.label(class="form-label") }}
+                {{ form.column_name(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.column_type.label(class="form-label") }}
+                {{ form.column_type(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.related_table.label(class="form-label") }}
+                {{ form.related_table(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.related_column.label(class="form-label") }}
+                {{ form.related_column(class="form-control") }}
+            </div>
+            <button type="submit" class="btn btn-primary">Add Column</button>
+        </form>
+        <a href="{{ url_for('admin.index') }}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

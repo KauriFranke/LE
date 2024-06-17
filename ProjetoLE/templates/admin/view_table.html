@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ table_name }} - Admin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ table_name }}</h1>
+        <form method="POST" action="{{ url_for('admin_panel.update_table', table_name=table_name) }}">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        {% for column in columns %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            {% for column in columns %}
+                                <td>
+                                    <input type="text" name="{{ row.id }}-{{ column }}" value="{{ row[column] }}" class="form-control">
+                                </td>
+                            {% endfor %}
+                            <td>
+                                <button type="submit" name="save" value="{{ row.id }}" class="btn btn-primary">Save</button>
+                                <button type="submit" name="delete" value="{{ row.id }}" class="btn btn-danger">Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+        <form method="POST" action="{{ url_for('admin_panel.add_row', table_name=table_name) }}">
+            <h2>Add New Row</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        {% for column in columns %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for column in columns %}
+                            <td>
+                                <input type="text" name="{{ column }}" class="form-control">
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-success">Add Row</button>
+        </form>
+        <a href="{{ url_for('admin.index') }}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
