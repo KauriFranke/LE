@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
 from flask_login import login_user, logout_user, login_required, current_user
 from . import db
-from .models import User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda
-from .forms import RegistrationForm, LoginForm, CharacterForm, AddColumnForm, ModifyColumnForm
+from .models import User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda, Profissao, classe_sub_classe
+from .forms import RegistrationForm, LoginForm, CharacterForm, ProfissaoForm, AddColumnForm, ModifyColumnForm
 from flask_migrate import upgrade, migrate, init
 from sqlalchemy import inspect
 import os
@@ -19,7 +19,7 @@ def get_column_type(column_type):
         return 'BOOLEAN'
     elif column_type == 'Float':
         return 'FLOAT'
-
+######################################################################################################
 @main.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -33,7 +33,7 @@ def register():
         flash('Registration successful! You can now log in.')
         return redirect(url_for('main.login'))
     return render_template('criarconta.html', form=form)
-
+######################################################################################################
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -47,23 +47,23 @@ def login():
         else:
             flash('Login unsuccessful. Please check email and password.')
     return render_template('login.html', form=form)
-
+######################################################################################################
 @main.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('main.login'))
-
+######################################################################################################
 @main.route('/perfil')
 @login_required
 def perfil():
     characters = Character.query.filter_by(user_id=current_user.id).all()
     return render_template('perfil.html', name=current_user.username, characters=characters)
-
+######################################################################################################
 @main.route('/homepage')
 def homepage():
     return render_template('homepage.html')
-
+######################################################################################################
 @main.route('/criarpersonagem', methods=['GET', 'POST'])
 @login_required
 def criarpersonagem():
@@ -80,68 +80,85 @@ def criarpersonagem():
         try:
             ancestry_name = form.ancestry.data
             sub_ancestry_name = form.sub_ancestry.data
-
-            # Mensagens de depuração detalhadas
-            print(f'Form submitted: {form.data}')
-            print(f'Creating character with name: {form.name.data}')
-            print(f'Ancestry: {ancestry_name}, Sub-Ancestry: {sub_ancestry_name}')
+            estilo_name = form.estilo.data
+            classe_name = form.classe.data
+            sub_classe_name = form.sub_classe.data
+            guilda_id = form.guilda.data
+            profissao_name = form.profissao.data
 
             character = Character(
                 name=form.name.data,
                 user_id=current_user.id,
                 ancestry_name=ancestry_name,
-                sub_ancestry_name=sub_ancestry_name
+                sub_ancestry_name=sub_ancestry_name,
+                estilo_name=estilo_name,
+                classe_name=classe_name,
+                sub_classe_name=sub_classe_name,
+                guilda_id=guilda_id,
+                profissao_name=profissao_name
             )
             db.session.add(character)
             db.session.commit()
             flash('Character created successfully!')
-            print('Character created successfully!')
             return redirect(url_for('main.perfil'))
         except Exception as e:
             db.session.rollback()
-            print(f'Error creating character: {str(e)}')  # Mensagem de depuração
-            flash(f'Error creating character: {str(e)}', 'danger')
+            flash(f'Error creating character: {e}', 'danger')
     else:
         for field, errors in form.errors.items():
             for error in errors:
-                print(f'Error in the {getattr(form, field).label.text} field - {error}')  # Mensagem de depuração
                 flash(f'Error in the {getattr(form, field).label.text} field - {error}', 'danger')
     return render_template('criarpersonagem.html', form=form)
-
+######################################################################################################
 @main.route('/get_sub_ancestries/<ancestral>')
 @login_required
 def get_sub_ancestries(ancestral):
     ancestry = Ancestry.query.filter_by(name=ancestral).first()
     if ancestry:
         sub_ancestries = SubAncestry.query.filter_by(ancestry_id=ancestry.id).all()
-        sub_ancestries_list = [{'name': sa.name} for sa in sub_ancestries]
-        return jsonify(sub_ancestries_list)
+        return jsonify([{'name': sa.name} for sa in sub_ancestries])
     return jsonify([])
-
-@main.route('/get_estilos')
-@login_required
-def get_estilos():
-    estilos = Estilo.query.all()
-    return jsonify([{'id': e.id, 'name': e.name} for e in estilos])
-
+######################################################################################################
 @main.route('/get_classes_by_estilo/<estilo_id>')
 @login_required
 def get_classes_by_estilo(estilo_id):
     classes = Classe.query.filter_by(estilo_id=estilo_id).all()
     return jsonify([{'id': c.id, 'name': c.name, 'description': c.description} for c in classes])
-
-@main.route('/get_sub_classes/<classe_id>/<category>')
+######################################################################################################
+############################################################################
+@main.route('/get_sub_classes_by_classe/<classe_id>')
 @login_required
-def get_sub_classes(classe_id, category):
-    sub_classes = SubClasse.query.filter_by(classe_id=classe_id, category=category).all()
-    return jsonify([{'id': sc.id, 'name': sc.name, 'description': sc.description} for sc in sub_classes])
+def get_sub_classes_by_classe(classe_id):
+    sub_classes = SubClasse.query.filter_by(classe_id=classe_id).all()
 
+    grouped_sub_classes = {
+        'dano': [sc for sc in sub_classes if sc.tipo_id == 1],
+        'vida': [sc for sc in sub_classes if sc.tipo_id == 2],
+        'especialista': [sc for sc in sub_classes if sc.tipo_id == 3]
+        # Adicione outros tipos se necessário
+    }
+
+    return jsonify({
+        'dano': [{'id': sc.id, 'name': sc.name, 'description': sc.description} for sc in grouped_sub_classes['dano']],
+        'vida': [{'id': sc.id, 'name': sc.name, 'description': sc.description} for sc in grouped_sub_classes['vida']],
+        'especialista': [{'id': sc.id, 'name': sc.name, 'description': sc.description} for sc in grouped_sub_classes['especialista']]
+    })
+######################################################################################################
 @main.route('/get_guildas')
 @login_required
 def get_guildas():
     guildas = Guilda.query.all()
     return jsonify([{'id': g.id, 'name': g.name, 'description': g.description} for g in guildas])
-
+######################################################################################################
+@main.route('/get_profissoes_by_guilda/<guilda>')
+@login_required
+def get_profissoes_by_guilda(guilda):
+    guilda_obj = Guilda.query.filter_by(name=guilda).first()
+    if guilda_obj:
+        profissoes = Profissao.query.filter_by(guilda_id=guilda_obj.id).all()
+        return jsonify([{'name': p.name, 'description': p.description} for p in profissoes])
+    return jsonify([])
+######################################################################################################
 @admin.route('/migrate/init')
 @login_required
 def migrate_init():
@@ -155,7 +172,7 @@ def migrate_init():
     except Exception as e:
         flash(f'Erro ao inicializar migração: {e}')
     return redirect(url_for('admin_panel.dashboard'))
-
+######################################################################################################
 @admin.route('/migrate/migrate')
 @login_required
 def run_migrate():
@@ -169,7 +186,7 @@ def run_migrate():
     except Exception as e:
         flash(f'Erro ao criar migração: {e}')
     return redirect(url_for('admin_panel.dashboard'))
-
+######################################################################################################
 @admin.route('/migrate/upgrade')
 @login_required
 def run_upgrade():
@@ -183,7 +200,7 @@ def run_upgrade():
     except Exception as e:
         flash(f'Erro ao aplicar migração: {e}')
     return redirect(url_for('admin_panel.dashboard'))
-
+######################################################################################################
 @admin.route('/dashboard')
 @login_required
 def dashboard():
@@ -192,7 +209,7 @@ def dashboard():
         return redirect(url_for('main.homepage'))
     
     return render_template('admin/dashboard.html')
-
+######################################################################################################
 @admin.route('/add_column', methods=['GET', 'POST'])
 @login_required
 def add_column():
@@ -229,7 +246,7 @@ def add_column():
         return redirect(url_for('admin_panel.add_column'))
 
     return render_template('admin/add_column.html', form=form)
-
+######################################################################################################
 @admin.route('/view_table/<table_name>', methods=['GET'])
 @login_required
 def view_table(table_name):
@@ -247,7 +264,7 @@ def view_table(table_name):
     columns = table.columns.keys()
     
     return render_template('admin/view_table.html', table_name=table_name, columns=columns, rows=query)
-
+######################################################################################################
 @admin.route('/update_table/<table_name>', methods=['POST'])
 @login_required
 def update_table(table_name):
@@ -280,7 +297,7 @@ def update_table(table_name):
         flash('Registro excluído com sucesso!')
 
     return redirect(url_for('admin_panel.view_table', table_name=table_name))
-
+######################################################################################################
 @admin.route('/add_row/<table_name>', methods=['POST'])
 @login_required
 def add_row(table_name):
@@ -305,7 +322,7 @@ def add_row(table_name):
     flash('Novo registro adicionado com sucesso!')
 
     return redirect(url_for('admin_panel.view_table', table_name=table_name))
-
+######################################################################################################
 @admin.route('/modify_column', methods=['GET', 'POST'])
 @login_required
 def modify_column():
@@ -345,8 +362,7 @@ def modify_column():
         form.column_name.choices = []
 
     return render_template('admin/modify_column.html', form=form)
-
-
+######################################################################################################
 @admin.route('/get_columns/<table_name>')
 @login_required
 def get_columns(table_name):

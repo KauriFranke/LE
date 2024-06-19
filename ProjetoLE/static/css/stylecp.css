@@ -3,6 +3,10 @@ body {
     color: white;
     font-family: Arial, sans-serif;
 }
+h1 {
+    display: flex;
+    justify-content: center;
+}
 .hidden {
     display: none;
 }

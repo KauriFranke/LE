@@ -13,6 +13,7 @@
         <a href="#classe" onclick="showSection('classe')">Classe</a>
         <a href="#sub-classe" onclick="showSection('sub-classe')">Sub-Classe</a>
         <a href="#guilda" onclick="showSection('guilda')">Guilda</a>
+        <a href="#profissao" onclick="showSection('profissao')">Profissão</a>
     </div>
 
     <div id="ancestral-section" class="hidden">
@@ -67,56 +68,80 @@
         <button id="next-button-ancestral" class="button hidden">Next</button>
     </div>
 
-    <div id="sub-ancestral-section" class="hidden">
+    <div id="sub-ancestral-section" class="section hidden">
         <h1>Select Sub-Ancestral</h1>
         <div class="card-container" id="sub-ancestral-cards"></div>
-        <button id="confirm-button-sub-ancestral" class="button hidden" disabled>Confirm Select</button>
+        <button id="back-button-sub-ancestral" class="button">Back</button>
+        <button id="next-button-sub-ancestral" class="button hidden" disabled>Next</button>
     </div>
 
-    <div id="estilo-section" class="hidden">
+    <div id="estilo-section">
         <h1>Select Estilo</h1>
         <div class="card-container" id="estilo-cards">
-            <div class="card" data-estilo="Corpo-a-Corpo">
-                <img src="{{ url_for('static', filename='img/corpo-a-corpo.png')}}" alt="Corpo-a-Corpo">
+            <!-- Estilo cards aqui -->
+            <div class="card" data-estilo="1">
+                <img src="corpo-a-corpo.png" alt="Corpo-a-Corpo">
                 <h2>Corpo-a-Corpo</h2>
                 <p>Especializado em combate próximo.</p>
             </div>
-            <div class="card" data-estilo="Distancia">
-                <img src="{{ url_for('static', filename='img/distancia.png')}}" alt="Distancia">
+            <div class="card" data-estilo="2">
+                <img src="distancia.png" alt="Distancia">
                 <h2>Distância</h2>
                 <p>Especializado em ataques à distância.</p>
             </div>
-            <div class="card" data-estilo="Magico">
-                <img src="{{ url_for('static', filename='img/magico.png')}}" alt="Magico">
+            <div class="card" data-estilo="3">
+                <img src="magico.png" alt="Magico">
                 <h2>Mágico</h2>
                 <p>Especializado em magia e feitiços.</p>
             </div>
         </div>
+        <button id="back-button-sub-ancestral" class="button">Back</button>
         <button id="next-button-estilo" class="button hidden">Next</button>
     </div>
 
-    <div id="class-section" class="hidden">
+    <div id="classe-section" class="section hidden">
         <h1>Select Class</h1>
         <div class="card-container" id="classe-cards">
-            <!-- Adicione cards de classes aqui -->
+            <!-- Os cards de classes serão carregados dinamicamente -->
         </div>
-        <button id="confirm-button-classe" class="button hidden" disabled>Confirm Select</button>
+        <button id="back-button-classe" class="button">Back</button>
+        <button id="next-button-classe" class="button hidden" disabled>Next</button>
     </div>
 
-    <div id="sub-class-section" class="hidden">
+    <div id="sub-classe-section" class="section hidden">
         <h1>Select Sub-Class</h1>
-        <div class="card-container" id="sub-class-cards">
-            <!-- Adicione cards de sub-classes aqui -->
+        <div class="card-container" id="dano-sub-classe-cards">
+            <h2>Dano</h2>
+            <!-- Cards de sub-classes de Dano serão inseridos aqui -->
         </div>
-        <button id="confirm-button-sub-classe" class="button hidden" disabled>Confirm Select</button>
-    </div>
+        <div class="card-container" id="vida-sub-classe-cards">
+            <h2>Vida</h2>
+            <!-- Cards de sub-classes de Vida serão inseridos aqui -->
+        </div>
+        <div class="card-container" id="especialista-sub-classe-cards">
+            <h2>Especialista</h2>
+            <!-- Cards de sub-classes de Especialista serão inseridos aqui -->
+        </div>
+        <button id="back-button-sub-classe" class="button">Back</button>
+        <button id="next-button-sub-classe" class="button hidden" disabled>Next</button>
+    </div>    
 
-    <div id="guilda-section" class="hidden">
+    <div id="guilda-section" class="section hidden">
         <h1>Select Guilda</h1>
         <div class="card-container" id="guilda-cards">
-            <!-- Adicione cards de guildas aqui -->
+            <!-- Os cards de guildas serão carregados dinamicamente -->
         </div>
-        <button id="confirm-button-guilda" class="button hidden" disabled>Confirm Select</button>
+        <button id="back-button-guilda" class="button">Back</button>
+        <button id="next-button-guilda" class="button hidden">Next</button>
+    </div>
+
+    <div id="profissao-section" class="section hidden">
+        <h1>Select Profissão</h1>
+        <div class="card-container" id="profissao-cards">
+            <!-- Os cards de profissões serão carregados dinamicamente -->
+        </div>
+        <button id="back-button-profissao" class="button">Back</button>
+        <button id="confirm-button-profissao" class="button hidden" disabled>Confirm Select</button>
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>

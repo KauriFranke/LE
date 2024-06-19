@@ -22,6 +22,11 @@ class Character(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     ancestry_name = db.Column(db.String(150), nullable=False)
     sub_ancestry_name = db.Column(db.String(150), nullable=False)
+    estilo_name = db.Column(db.String(150), nullable=False)  # Adicione essa linha
+    classe_name = db.Column(db.String(150), nullable=False)
+    sub_classe_name = db.Column(db.String(150), nullable=False)
+    guilda_id = db.Column(db.Integer, db.ForeignKey('guilda.id'), nullable=False)
+    profissao_name = db.Column(db.String(150), nullable=False)
     
 class Ancestry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,26 +40,43 @@ class SubAncestry(db.Model):
 
     ancestry = db.relationship('Ancestry', back_populates='sub_ancestries')
 
+classe_sub_classe = db.Table('classe_sub_classe',
+    db.Column('classe_id', db.Integer, db.ForeignKey('classe.id'), primary_key=True),
+    db.Column('sub_classe_id', db.Integer, db.ForeignKey('sub_classe.id'), primary_key=True)
+)
+
 class Estilo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False, unique=True)
+    name = db.Column(db.String(100), nullable=False)
     classes = db.relationship('Classe', backref='estilo', lazy=True)
 
 class Classe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False, unique=True)
+    name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=True)
+    sub_classes = db.relationship('SubClasse', secondary=classe_sub_classe, backref=db.backref('classes', lazy='dynamic'))
     estilo_id = db.Column(db.Integer, db.ForeignKey('estilo.id'), nullable=False)
-    sub_classes = db.relationship('SubClasse', backref='classe', lazy=True)
+
+class TipoSubClasse(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
 
 class SubClasse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=True)
-    category = db.Column(db.String(50), nullable=False)
+    tipo_id = db.Column(db.Integer, db.ForeignKey('tipo_sub_classe.id'), nullable=False)
     classe_id = db.Column(db.Integer, db.ForeignKey('classe.id'), nullable=False)
+    tipo = db.relationship('TipoSubClasse')
 
 class Guilda(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False, unique=True)
-    description = db.Column(db.String(200), nullable=True)
+    name = db.Column(db.String(150), unique=True, nullable=False)
+    description = db.Column(db.String(500))
+    profissoes = db.relationship('Profissao', backref='guilda', lazy=True)
+
+class Profissao(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), unique=True, nullable=False)
+    description = db.Column(db.String(500), nullable=True)
+    guilda_id = db.Column(db.Integer, db.ForeignKey('guilda.id'), nullable=False)

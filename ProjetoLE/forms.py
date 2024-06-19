@@ -28,14 +28,24 @@ class LoginForm(FlaskForm):
 
 class CharacterForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    ancestry = SelectField('Ancestry', validators=[DataRequired()])
-    sub_ancestry = SelectField('Sub-Ancestry', validators=[DataRequired()])
+    ancestry = SelectField('Ancestry', choices=[])
+    sub_ancestry = SelectField('Sub-Ancestry', choices=[])
+    estilo = SelectField('Estilo', choices=[])  # Adicione essa linha
+    classe = SelectField('Classe', choices=[])
+    sub_classe = SelectField('Sub-Classe', choices=[])
+    guilda = SelectField('Guilda', choices=[])
+    profissao = SelectField('Profissao', choices=[])
     submit = SubmitField('Create Character')
 
     def __init__(self, *args, **kwargs):
         super(CharacterForm, self).__init__(*args, **kwargs)
         self.ancestry.choices = [(a.name, a.name) for a in Ancestry.query.order_by(Ancestry.name).all()]
         self.sub_ancestry.choices = []
+
+class ProfissaoForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    guilda = SelectField('Guilda', choices=[], validators=[DataRequired()])
+    submit = SubmitField('Create Profession')
 
 class AddColumnForm(FlaskForm):
     table_name = SelectField('Table', validators=[DataRequired()])
