@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
 from flask_login import login_user, logout_user, login_required, current_user
 from . import db
-from .models import User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda, Profissao, classe_sub_classe
+from .models import User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda, Profissao, TipoSubClasse
 from .forms import RegistrationForm, LoginForm, CharacterForm, ProfissaoForm, AddColumnForm, ModifyColumnForm
 from flask_migrate import upgrade, migrate, init
 from sqlalchemy import inspect
@@ -126,22 +126,27 @@ def get_classes_by_estilo(estilo_id):
     return jsonify([{'id': c.id, 'name': c.name, 'description': c.description} for c in classes])
 ######################################################################################################
 ############################################################################
-@main.route('/get_sub_classes_by_classe/<classe_id>')
-@login_required
+@main.route('/get_sub_classes_by_classe/<int:classe_id>', methods=['GET'])
 def get_sub_classes_by_classe(classe_id):
-    sub_classes = SubClasse.query.filter_by(classe_id=classe_id).all()
+    classe = Classe.query.get(classe_id)
+    if not classe:
+        return jsonify({"error": "Classe not found"}), 404
 
-    grouped_sub_classes = {
-        'dano': [sc for sc in sub_classes if sc.tipo_id == 1],
-        'vida': [sc for sc in sub_classes if sc.tipo_id == 2],
-        'especialista': [sc for sc in sub_classes if sc.tipo_id == 3]
-        # Adicione outros tipos se necessário
-    }
+    sub_classes = SubClasse.query.filter(
+        (SubClasse.tipo_id == classe.type_id1) | (SubClasse.tipo_id == classe.type_id2)
+    ).all()
+
+    type1 = TipoSubClasse.query.get(classe.type_id1)
+    type2 = TipoSubClasse.query.get(classe.type_id2)
+
+    sub_classes_data = [{"id": sub_classe.id, "name": sub_classe.name, "description": sub_classe.description, "tipo_id": sub_classe.tipo_id} for sub_classe in sub_classes]
 
     return jsonify({
-        'dano': [{'id': sc.id, 'name': sc.name, 'description': sc.description} for sc in grouped_sub_classes['dano']],
-        'vida': [{'id': sc.id, 'name': sc.name, 'description': sc.description} for sc in grouped_sub_classes['vida']],
-        'especialista': [{'id': sc.id, 'name': sc.name, 'description': sc.description} for sc in grouped_sub_classes['especialista']]
+        "sub_classes": sub_classes_data,
+        "types": [
+            {"id": classe.type_id1, "name": type1.name},
+            {"id": classe.type_id2, "name": type2.name}
+        ]
     })
 ######################################################################################################
 @main.route('/get_guildas')

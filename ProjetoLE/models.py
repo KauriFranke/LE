@@ -1,6 +1,9 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from sqlalchemy.orm import relationship
+from sqlalchemy.schema import ForeignKey
+from sqlalchemy import Integer, String, Column
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,34 +43,31 @@ class SubAncestry(db.Model):
 
     ancestry = db.relationship('Ancestry', back_populates='sub_ancestries')
 
-classe_sub_classe = db.Table('classe_sub_classe',
-    db.Column('classe_id', db.Integer, db.ForeignKey('classe.id'), primary_key=True),
-    db.Column('sub_classe_id', db.Integer, db.ForeignKey('sub_classe.id'), primary_key=True)
-)
-
 class Estilo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     classes = db.relationship('Classe', backref='estilo', lazy=True)
 
-class Classe(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(200), nullable=True)
-    sub_classes = db.relationship('SubClasse', secondary=classe_sub_classe, backref=db.backref('classes', lazy='dynamic'))
-    estilo_id = db.Column(db.Integer, db.ForeignKey('estilo.id'), nullable=False)
-
 class TipoSubClasse(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
 
 class SubClasse(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(200), nullable=True)
-    tipo_id = db.Column(db.Integer, db.ForeignKey('tipo_sub_classe.id'), nullable=False)
-    classe_id = db.Column(db.Integer, db.ForeignKey('classe.id'), nullable=False)
-    tipo = db.relationship('TipoSubClasse')
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    description = Column(String(200), nullable=True)
+    tipo_id = Column(Integer, ForeignKey('tipo_sub_classe.id'), nullable=False)
+    tipo = relationship('TipoSubClasse')
+
+class Classe(db.Model):
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    description = Column(String(200), nullable=True)
+    estilo_id = Column(Integer, ForeignKey('estilo.id'), nullable=False)
+    type_id1 = Column(Integer, ForeignKey('tipo_sub_classe.id'), nullable=False)
+    type_id2 = Column(Integer, ForeignKey('tipo_sub_classe.id'), nullable=False)
+    sub_classes1 = relationship('SubClasse', primaryjoin="foreign(Classe.type_id1)==SubClasse.tipo_id")
+    sub_classes2 = relationship('SubClasse', primaryjoin="foreign(Classe.type_id2)==SubClasse.tipo_id")
 
 class Guilda(db.Model):
     id = db.Column(db.Integer, primary_key=True)

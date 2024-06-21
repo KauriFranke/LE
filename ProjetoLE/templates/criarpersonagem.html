@@ -14,6 +14,7 @@
         <a href="#sub-classe" onclick="showSection('sub-classe')">Sub-Classe</a>
         <a href="#guilda" onclick="showSection('guilda')">Guilda</a>
         <a href="#profissao" onclick="showSection('profissao')">Profissão</a>
+        <a href="#resumo" onclick="showSection('resumo')">Resumo</a>
     </div>
 
     <div id="ancestral-section" class="hidden">
@@ -95,7 +96,7 @@
                 <p>Especializado em magia e feitiços.</p>
             </div>
         </div>
-        <button id="back-button-sub-ancestral" class="button">Back</button>
+        <button id="back-button-estilo" class="button">Back</button>
         <button id="next-button-estilo" class="button hidden">Next</button>
     </div>
 
@@ -110,18 +111,7 @@
 
     <div id="sub-classe-section" class="section hidden">
         <h1>Select Sub-Class</h1>
-        <div class="card-container" id="dano-sub-classe-cards">
-            <h2>Dano</h2>
-            <!-- Cards de sub-classes de Dano serão inseridos aqui -->
-        </div>
-        <div class="card-container" id="vida-sub-classe-cards">
-            <h2>Vida</h2>
-            <!-- Cards de sub-classes de Vida serão inseridos aqui -->
-        </div>
-        <div class="card-container" id="especialista-sub-classe-cards">
-            <h2>Especialista</h2>
-            <!-- Cards de sub-classes de Especialista serão inseridos aqui -->
-        </div>
+        <div id="sub-classe-container"></div>
         <button id="back-button-sub-classe" class="button">Back</button>
         <button id="next-button-sub-classe" class="button hidden" disabled>Next</button>
     </div>    
@@ -142,6 +132,19 @@
         </div>
         <button id="back-button-profissao" class="button">Back</button>
         <button id="confirm-button-profissao" class="button hidden" disabled>Confirm Select</button>
+    </div>
+
+    <div id="resumo-section" class="section hidden">
+        <h1>Resumo das Escolhas</h1>
+        <div class="card-container" id="resumo-cards">
+            <!-- Os cards de resumo serão carregados dinamicamente -->
+        </div>
+        <div class="form-group">
+            <label for="nome-personagem">Nome do Personagem:</label>
+            <input type="text" id="nome-personagem" name="nome-personagem" required>
+        </div>
+        <button id="back-button-resumo" class="button">Back</button>
+        <button id="create-character-button" class="button">Criar Personagem</button>
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
