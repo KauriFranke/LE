@@ -27,15 +27,21 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class CharacterForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    ancestry = SelectField('Ancestry', choices=[])
-    sub_ancestry = SelectField('Sub-Ancestry', choices=[])
-    estilo = SelectField('Estilo', choices=[])  # Adicione essa linha
-    classe = SelectField('Classe', choices=[])
-    sub_classe = SelectField('Sub-Classe', choices=[])
-    guilda = SelectField('Guilda', choices=[])
-    profissao = SelectField('Profissao', choices=[])
-    submit = SubmitField('Create Character')
+    name = StringField('Nome do Personagem', validators=[DataRequired()])
+    ancestry = SelectField('Ancestralidade', choices=[], coerce=int, validators=[DataRequired()])
+    sub_ancestry = SelectField('Sub-Ancestralidade', choices=[], coerce=int, validators=[DataRequired()])
+    estilo = SelectField('Estilo', choices=[], coerce=int, validators=[DataRequired()])
+    classe = SelectField('Classe', choices=[], coerce=int, validators=[DataRequired()])
+    sub_classe1 = SelectField('Sub-Classe 1', choices=[], coerce=int, validators=[DataRequired()])
+    sub_classe2 = SelectField('Sub-Classe 2', choices=[], coerce=int, validators=[DataRequired()])
+    guilda = SelectField('Guilda', choices=[], coerce=int, validators=[DataRequired()])
+    profissao = SelectField('Profissão', choices=[], coerce=int, validators=[DataRequired()])
+    level = SelectField('Nível', choices=[], coerce=int, validators=[DataRequired()])
+    forca = SelectField('Força', choices=[], coerce=int, validators=[DataRequired()])
+    agilidade = SelectField('Agilidade', choices=[], coerce=int, validators=[DataRequired()])
+    inteligencia = SelectField('Inteligência', choices=[], coerce=int, validators=[DataRequired()])
+    presenca = SelectField('Presença', choices=[], coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Criar Personagem')
 
     def __init__(self, *args, **kwargs):
         super(CharacterForm, self).__init__(*args, **kwargs)

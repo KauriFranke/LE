@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha do Personagem</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ficha.css') }}">
+</head>
+<body>
+    <img class="backgroundsite" src="{{ url_for('static', filename='img/LE background.png') }}" alt="Background Image" />
+    <header>
+        <div class="logo">
+            <img class="LeLogoNome" src="{{ url_for('static', filename='img/logobranca.png') }}" alt="Logo" />  
+            <span></span>
+        </div>
+        <div class="tdheader">
+            <div class="links">
+                <div><a href="#">Mundo</a></div>
+                <div><a href="#">Wiki</a></div>
+                <div><a href="#">Comunidade</a></div>
+                <div><a href="#">Contato</a></div>
+            </div>
+            <div class="headerbuttons">
+                <div>
+                    <a href="{{ url_for('main.logout') }}">
+                        <button class="logout">Log out</button>
+                    </a>
+                </div>
+                <div>
+                    <a href="{{ url_for('main.login') }}"></a>
+                        <button class="play">Perfil</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="site">
+        <div class="character-sheet">
+            <div class="navbar">
+                <a href="#" onclick="showSection('geral')">Geral</a>
+                <a href="#" onclick="showSection('mochila')">Mochila</a>
+                <a href="#" onclick="showSection('elementos')">Elementos</a>
+            </div>
+        </div>
+        <div class="content">
+            <div id="geral-section" class="section">
+                <div class="resumo">
+                    <div>
+                        <h1>{{ character.name }}</h1>
+                    </div>
+                    <div class="resumo_personagem">
+                        <p class="caixaresumo">Ancestral: {{ character.ancestry.name }}</p>
+                        <p class="caixaresumo">Sub-Ancestral: {{ character.sub_ancestry.name }}</p>
+                        <p class="caixaresumo">Estilo: {{ character.estilo.name }}</p>
+                        <p class="caixaresumo">Classe: {{ character.classe.name }}</p>
+                        <div class="break"></div>
+                        <p class="caixaresumo">Guilda: {{ character.guilda.name }}</p>
+                        <p class="caixaresumo">Profissão: {{ character.profissao.name }}</p>
+                        <p class="caixaresumo">Sub-Classe 1: {{ character.sub_classe1.name }}</p>
+                        <p class="caixaresumo">Sub-Classe 2: {{ character.sub_classe2.name }}</p>
+                    </div>
+                    <div class="informacoes">
+                        <p class="caixainformacoes"> Nível: {{ character.level }}</p>
+                        <p class="caixainformacoes"> Proficiência: {{ proficiencia }}</p>
+                    </div>
+                    <div class="atributos">
+                        <div class="atributo">
+                            <h4>Força</h4>
+                            <div class="atributo-box">
+                                <span>{{ character.forca }}</span>
+                            </div>
+                        </div>
+                        <div class="atributo">
+                            <h4>Agilidade</h4>
+                            <div class="atributo-box">
+                                <span>{{ character.agilidade }}</span>
+                            </div>
+                        </div>
+                        <div class="atributo">
+                            <h4>Inteligência</h4>
+                            <div class="atributo-box">
+                                <span>{{ character.inteligencia }}</span>
+                            </div>
+                        </div>
+                        <div class="atributo">
+                            <h4>Presença</h4>
+                            <div class="atributo-box">
+                                <span>{{ character.presenca }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="foto">
+
+                    </div>
+                    <div class="proeficiencia">
+                        
+                    </div>
+                    <div class="pericias">
+
+                    </div>
+                    <div class="tracos">
+                        
+                    </div>
+                    <div class="combate">
+                        <p class="caixaatributos"> Vida: {{ vida }}</p>
+                        <p class="caixaatributos"> PM: {{ pm }}</p>
+                    </div>
+                </div>
+            </div>
+            <div id="mochila-section" class="section hidden">
+                <h2>Mochila</h2>
+            </div>
+            <div id="elementos-section" class="section hidden">
+                <h2>Elementos</h2>
+                {% for elemento in elementos %}
+                    {% if elemento %}
+                        <div id="elemento-{{ elemento.id }}">
+                            <h3>{{ elemento.name }}</h3>
+                            <table border="1">
+                                <thead>
+                                    <tr>
+                                        <th>Vantagens</th>
+                                        <th>Resistências</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <table border="1">
+                                                <tbody>
+                                                    {% for vantagem in vantagens if vantagem.elemento_id == elemento.id %}
+                                                        <tr>
+                                                            <td>{{ vantagem.vantagem_elemento.name }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table border="1">
+                                                <tbody>
+                                                    {% for resistencia in resistencias if resistencia.elemento_id == elemento.id %}
+                                                        <tr>
+                                                            <td>{{ resistencia.resistencia_elemento.name }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/ficha.js') }}"></script>
+</body>
+</html>

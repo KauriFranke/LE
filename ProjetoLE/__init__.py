@@ -25,7 +25,7 @@ def create_app():
     migrate.init_app(app, db)
     admin.init_app(app)
 
-    from ProjetoLE.models import User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda
+    from ProjetoLE.models import User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda, Elemento
 
     admin.add_view(ModelView(User, db.session, endpoint='user'))
     admin.add_view(ModelView(Character, db.session, endpoint='character'))
@@ -35,6 +35,7 @@ def create_app():
     admin.add_view(ModelView(Classe, db.session, endpoint='classe'))
     admin.add_view(ModelView(SubClasse, db.session, endpoint='subclasse'))
     admin.add_view(ModelView(Guilda, db.session, endpoint='guilda'))
+    admin.add_view(ModelView(Elemento, db.session, endpoint='elemento'))
 
     from .routes import main, admin as admin_bp  # Importa e renomeia o blueprint admin
     app.register_blueprint(main)

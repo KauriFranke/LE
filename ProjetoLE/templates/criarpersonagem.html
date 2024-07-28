@@ -14,53 +14,54 @@
         <a href="#sub-classe" onclick="showSection('sub-classe')">Sub-Classe</a>
         <a href="#guilda" onclick="showSection('guilda')">Guilda</a>
         <a href="#profissao" onclick="showSection('profissao')">Profissão</a>
+        <a href="#atributos-pericias" onclick="showSection('atributos-pericias')">Atributos e Perícias</a>
         <a href="#resumo" onclick="showSection('resumo')">Resumo</a>
     </div>
 
     <div id="ancestral-section" class="hidden">
-        <h1>Select Ancestral</h1>
+        <h1>Selecione seu Ancestral</h1>
         <div class="card-container" id="ancestral-cards">
-            <div class="card" data-ancestral="Angelical">
-                <img src="{{ url_for('static', filename='img/ano.png')}}" alt="Angelical">
+            <div class="card" data-ancestral="1">
+                <img src="{{ url_for('static', filename='img/ance/Anjo.jpg')}}" alt="Angelical">
                 <h2>Angelical</h2>
                 <p>Proud, etc.</p>
             </div>
-            <div class="card" data-ancestral="Besset">
+            <div class="card" data-ancestral="2">
                 <img src="{{ url_for('static', filename='img/besset.png')}}" alt="Besset">
                 <h2>Besset</h2>
                 <p>Strong, etc.</p>
             </div>
-            <div class="card" data-ancestral="Dyr">
+            <div class="card" data-ancestral="3">
                 <img src="{{ url_for('static', filename='img/dyr.png')}}" alt="Dyr">
                 <h2>Dyr</h2>
                 <p>Fierce, etc.</p>
             </div>
-            <div class="card" data-ancestral="Elare">
+            <div class="card" data-ancestral="4">
                 <img src="elare.png" alt="Elare">
                 <h2>Elare</h2>
                 <p>Fierce, etc.</p>
             </div>
-            <div class="card" data-ancestral="Humano">
+            <div class="card" data-ancestral="5">
                 <img src="humano.png" alt="Humano">
                 <h2>Humano</h2>
                 <p>Fierce, etc.</p>
             </div>
-            <div class="card" data-ancestral="Metamorfo">
+            <div class="card" data-ancestral="6">
                 <img src="metamorfo.png" alt="Metamorfo">
                 <h2>Metamorfo</h2>
                 <p>Fierce, etc.</p>
             </div>
-            <div class="card" data-ancestral="Oni">
+            <div class="card" data-ancestral="7">
                 <img src="oni.png" alt="Oni">
                 <h2>Oni</h2>
                 <p>Fierce, etc.</p>
             </div>
-            <div class="card" data-ancestral="Ogros">
+            <div class="card" data-ancestral="8">
                 <img src="ogros.png" alt="Ogros">
-                <h2>Ogros</h2>
+                <h2>Ogro</h2>
                 <p>Fierce, etc.</p>
             </div>
-            <div class="card" data-ancestral="Constructo">
+            <div class="card" data-ancestral="9">
                 <img src="constructo.png" alt="Constructo">
                 <h2>Constructo</h2>
                 <p>Fierce, etc.</p>
@@ -70,14 +71,14 @@
     </div>
 
     <div id="sub-ancestral-section" class="section hidden">
-        <h1>Select Sub-Ancestral</h1>
+        <h1>Selecione seu Sub-Ancestral</h1>
         <div class="card-container" id="sub-ancestral-cards"></div>
         <button id="back-button-sub-ancestral" class="button">Back</button>
         <button id="next-button-sub-ancestral" class="button hidden" disabled>Next</button>
     </div>
 
     <div id="estilo-section">
-        <h1>Select Estilo</h1>
+        <h1>Selecione seu Estilo</h1>
         <div class="card-container" id="estilo-cards">
             <!-- Estilo cards aqui -->
             <div class="card" data-estilo="1">
@@ -101,7 +102,7 @@
     </div>
 
     <div id="classe-section" class="section hidden">
-        <h1>Select Class</h1>
+        <h1>Selecione sua Classe</h1>
         <div class="card-container" id="classe-cards">
             <!-- Os cards de classes serão carregados dinamicamente -->
         </div>
@@ -110,14 +111,14 @@
     </div>
 
     <div id="sub-classe-section" class="section hidden">
-        <h1>Select Sub-Class</h1>
+        <h1>Selecione sua Sub-Classe</h1>
         <div id="sub-classe-container"></div>
         <button id="back-button-sub-classe" class="button">Back</button>
         <button id="next-button-sub-classe" class="button hidden" disabled>Next</button>
     </div>    
 
     <div id="guilda-section" class="section hidden">
-        <h1>Select Guilda</h1>
+        <h1>Selecione sua Guilda</h1>
         <div class="card-container" id="guilda-cards">
             <!-- Os cards de guildas serão carregados dinamicamente -->
         </div>
@@ -126,13 +127,130 @@
     </div>
 
     <div id="profissao-section" class="section hidden">
-        <h1>Select Profissão</h1>
+        <h1>Selecione sua Profissão</h1>
         <div class="card-container" id="profissao-cards">
             <!-- Os cards de profissões serão carregados dinamicamente -->
         </div>
         <button id="back-button-profissao" class="button">Back</button>
         <button id="confirm-button-profissao" class="button hidden" disabled>Confirm Select</button>
     </div>
+
+    <div id="atributos-pericias-section" class="hidden">
+        <div class="attribute-container">
+            <div class="level-points">
+                <div class="level-card">
+                    <h3>Nível</h3>
+                    <div class="level-value" id="nivel-value">1</div>
+                    <button class="decrement attribute-card-button" data-target="nivel">-</button>
+                    <button class="increment attribute-card-button" data-target="nivel">+</button>
+                </div>
+                <div class="points-card">
+                    <h3>Pontos Restantes</h3>
+                    <div class="points-value" id="pontos-restantes">3</div>
+                </div>
+            </div>
+            <div class="atributos">
+                <div class="attribute-card">
+                    <h3>Força</h3>
+                    <div class="attribute-value" id="forca-value">1</div>
+                    <button class="decrement" data-target="forca">-</button>
+                    <button class="increment" data-target="forca">+</button>
+                </div>
+                <div class="attribute-card">
+                    <h3>Agilidade</h3>
+                    <div class="attribute-value" id="agilidade-value">1</div>
+                    <button class="decrement" data-target="agilidade">-</button>
+                    <button class="increment" data-target="agilidade">+</button>
+                </div>
+                <div class="attribute-card">
+                    <h3>Inteligência</h3>
+                    <div class="attribute-value" id="inteligencia-value">1</div>
+                    <button class="decrement" data-target="inteligencia">-</button>
+                    <button class="increment" data-target="inteligencia">+</button>
+                </div>
+                <div class="attribute-card">
+                    <h3>Presença</h3>
+                    <div class="attribute-value" id="presenca-value">1</div>
+                    <button class="decrement" data-target="presenca">-</button>
+                    <button class="increment" data-target="presenca">+</button>
+                </div>
+            </div>
+        </div>   
+        
+        <div class="borda"></div>   
+
+        <div class="pericias-container">
+            <div class="profissao-pericias">
+                <h3>Perícias da Profissão</h3>
+                <div id="profissao-pericias-container"></div>
+            </div>
+            <div class="ancestry-pericias">
+                <h3>Perícias do Ancestral</h3>
+                <div id="ancestry-pericias-container"></div>
+            </div>           
+        </div>
+
+        <div id="habilidoso-pericias-section" class="hidden">
+            <h3>Escolha duas perícias adicionais (exceto de percepção)</h3>
+            <div id="habilidoso-pericias-container"></div>
+        </div> 
+
+        <div id="habilidoso-error-message" class="hidden" style="color: red;">Você pode selecionar no máximo 3 perícias.</div>
+        <div id="ancestry-error-message" class="hidden" style="color: red;">Você pode selecionar no máximo 1 perícia.</div>
+
+        <div class="borda"></div>
+        
+        <div class="skills-container">
+            <div class="skills-column" id="todas-pericias-container">
+                <h3>Coordenação</h3>
+                <div class="skills-header">
+                    <div class="span-1"><span>Trei</span><span>Atri</span></div>
+                    <div class="span-2"><span>Perícia</span></div>
+                    <div class="span-3"><span>Bônus</span><span>D20</span></div>
+                </div>
+                <div class="skills-list" id="coordenacao-pericias-todas">
+                    <!-- Todas as Perícias de Coordenação aqui -->
+                </div>
+            </div>
+            <div class="borda-skill"></div>
+            <div class="skills-column">
+                <h3>Sabedoria</h3>
+                <div class="skills-header">
+                    <div class="span-1"><span>Trei</span><span>Atri</span></div>
+                    <div class="span-2"><span>Perícia</span></div>
+                    <div class="span-3"><span>Bônus</span><span>D20</span></div>
+                </div>
+                <div class="skills-list" id="sabedoria-pericias-todas">
+                    <!-- Todas as Perícias de Sabedoria aqui -->
+                </div>
+            </div>
+            <div class="borda-skill"></div>
+            <div class="skills-column">
+                <h3>Social</h3>
+                <div class="skills-header">
+                    <div class="span-1"><span>Trei</span><span>Atri</span></div>
+                    <div class="span-2"><span>Perícia</span></div>
+                    <div class="span-3"><span>Bônus</span><span>D20</span></div>
+                </div>
+                <div class="skills-list" id="social-pericias-todas">
+                    <!-- Todas as Perícias de Social aqui -->
+                </div>
+            </div>
+            <div class="borda-skill"></div>
+            <div class="skills-column">
+                <h3>Percepção</h3>
+                <div class="skills-header">
+                    <div class="span-1"><span>Trei</span><span>Atri</span></div>
+                    <div class="span-2"><span>Perícia</span></div>
+                    <div class="span-3"><span>Bônus</span><span>D20</span></div>
+                </div>
+                <div class="skills-list" id="percepcao-pericias-todas">
+                    <!-- Todas as Perícias de Percepção aqui -->
+                </div>
+            </div>
+        </div>        
+        <button id="next-button-atributos-pericias" class="button hidden">Proximo</button>
+    </div>       
 
     <div id="resumo-section" class="section hidden">
         <h1>Resumo das Escolhas</h1>
@@ -145,7 +263,7 @@
         </div>
         <button id="back-button-resumo" class="button">Back</button>
         <button id="create-character-button" class="button">Criar Personagem</button>
-    </div>
+    </div>    
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

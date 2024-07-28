@@ -3,9 +3,17 @@ body {
     color: white;
     font-family: Arial, sans-serif;
 }
+img {
+    width: 200px;
+    height: 300px;
+}
 h1 {
     display: flex;
     justify-content: center;
+}
+#error-message {
+    color: red;
+    margin-top: 10px;
 }
 .hidden {
     display: none;
@@ -45,7 +53,7 @@ h1 {
     cursor: not-allowed;
 }
 .selected-card {
-    border: 2px solid #ff4b5c;
+    border: 2px solid #00ff0d;
 }
 .navbar {
     overflow: hidden;
@@ -75,7 +83,12 @@ h1 {
     gap: 10px;
     justify-content: center;
 }
-
+.sub-classe-image {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
 .sub-classe-container .card {
     width: 200px;
     text-align: center;
@@ -106,4 +119,211 @@ h1 {
 
 #resumo-section .button {
     margin-top: 20px;
+}
+.obrigatoria {
+    border: 2px solid red;
+}
+
+.selected-card.obrigatoria {
+    border-color: #ff4b5c; /* Muda a borda para verde quando selecionada */
+}
+.disabled-card {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+#atributos-container, #pericias-section {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
+.attribute-container {
+    display: flex;
+    margin-bottom: 20px;
+    margin-top: 30px;
+    justify-content: center;
+    gap: 200px;
+}
+
+.attribute-card, .points-card, .level-card {
+    background-color: #2b2b3d; /* Fundo preto */
+    color: #fff; /* Texto branco */
+    border: 2px solid #ff0000; /* Borda vermelha */
+    padding: 10px;
+    text-align: center;
+    width: 100px;
+    border-radius: 10px;
+}
+
+.attribute-card h3, .points-card h3, .level-card h3 {
+    margin: 0;
+    padding-bottom: 10px;
+}
+
+.attribute-card .attribute-value, .points-card .points-value, .level-card .level-value {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.attribute-card button {
+    background-color: #fff;
+    color: #000;
+    border: 2px solid #ff0000;
+    padding: 5px;
+    width: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.attribute-card button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.attribute-card button, .level-card button {
+    background-color: #fff;
+    color: #000;
+    border: 2px solid #ff0000;
+    padding: 5px;
+    width: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.attribute-card button:disabled, .level-card button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.level-points, .atributos {
+    display: flex;
+    gap: 20px;
+}
+.borda {
+    border-bottom: 1px solid rgb(255, 255, 255) ;
+}
+.borda-skill {
+    border-left: 1px solid rgb(255, 255, 255) ;
+}
+#pericias-section {
+    border-top: 2px solid black;
+    margin-top: 20px;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+#ancestry-pericias-container, #profissao-pericias-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.pericias-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+/* Container principal das habilidades */
+.skills-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.skills-column {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.skills-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.skills-list label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.skills-list .checkbox {
+    flex: 0 0 5%;
+}
+
+.skills-list .atributo {
+    display: flex;
+    flex: 0 0 15%;
+    text-align: left;
+    justify-content: center;
+}
+
+.skills-list .pericia {
+    flex: 1;
+    text-align: left;
+    padding-left: 5px;
+}
+
+.skills-list .bonus {
+    flex: 0 0 10%;
+    text-align: right;
+    padding-right: 5px;
+}
+
+.skills-list .d20 {
+    flex: 0 0 15%;
+    text-align: right;
+}
+
+.borda-skill {
+    border-left: 1px solid #ccc;
+    margin: 0 10px;
+}
+
+.skills-header {
+    display: flex;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.skills-header span {
+    width: 15%; /* Ajuste conforme necessário para garantir o alinhamento */
+    text-align: center;
+}
+span.bonus-text {
+    margin-right: 55px;
+}
+span.d20-text {
+    margin-right: 20px;
+}
+.span-1{
+    display: flex;
+    gap: 30px;
+    padding-right: 6px;
+}
+.span-2 {
+    padding-right: 150px;
+}
+.span-3 {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+/* Estilo para transformar os checkboxes em bolinhas */
+input[type="checkbox"].trained-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.5em;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+input[type="checkbox"].trained-checkbox.profession-trained:checked {
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+
+input[type="checkbox"].trained-checkbox.ancestry-trained:checked {
+    background-color: #ffffff;
+    border-color: #ffffff;
 }

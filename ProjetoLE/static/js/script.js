@@ -1,54 +1,175 @@
-let selectedAncestral = null;
-let selectedSubAncestral = null;
-let selectedEstilo = null;
-let selectedClasse = null;
-let selectedSubClasse1 = null;
-let selectedSubClasse2 = null;
-let selectedGuilda = null;
-let selectedProfissao = null;
-let selectedType1SubClasse = null;
-let selectedType2SubClasse = null;
-
-// Variáveis de estado para verificar se todas as seleções foram feitas
-let isAncestralSelected = false;
-let isSubAncestralSelected = false;
-let isEstiloSelected = false;
-let isClasseSelected = false;
-let isSubClasse1Selected = false;
-let isSubClasse2Selected = false;
-let isGuildaSelected = false;
-let isProfissaoSelected = false;
+const state = {
+    selectedAncestral: null,
+    selectedAncestralName: null,
+    selectedSubAncestral: null,
+    selectedSubAncestralName: null,
+    selectedEstilo: null,
+    selectedEstiloName: null,
+    selectedClasse: null,
+    selectedClasseName: null,
+    selectedSubClasse1: null,
+    selectedSubClasse1Name: null,
+    selectedSubClasse1Element: null,
+    selectedSubClasse2: null,
+    selectedSubClasse2Name: null,
+    selectedSubClasse2Element: null,
+    selectedGuilda: null,
+    selectedGuildaName: null,
+    selectedProfissao: null,
+    selectedProfissaoName: null,
+    obligatoryElement: null,
+    obligatoryElementName: null,
+    selectedProfissaoPericias: [],
+    selectedAncestryPericias: [],
+    pontosRestantes: 3,
+    nivel: 1,
+    profissaoPericiasBloqueadas: []
+};
 
 document.addEventListener('DOMContentLoaded', function() {
+    initialize();
     showSection('ancestral');
+});
 
-    // Adicionar eventos de clique para os botões de voltar
-    document.getElementById('back-button-sub-ancestral').addEventListener('click', function() {
-        showSection('ancestral');
+function initialize() {
+    addBackButtonListeners();
+    addNextButtonListeners();
+    addIncrementDecrementListeners();
+    addCardSelectionListeners();
+}
+
+function addBackButtonListeners() {
+    const backButtons = [
+        { id: 'back-button-sub-ancestral', section: 'ancestral' },
+        { id: 'back-button-estilo', section: 'sub-ancestral' },
+        { id: 'back-button-classe', section: 'estilo' },
+        { id: 'back-button-sub-classe', section: 'classe' },
+        { id: 'back-button-guilda', section: 'sub-classe' },
+        { id: 'back-button-profissao', section: 'guilda' }
+    ];
+
+    backButtons.forEach(button => {
+        document.getElementById(button.id).addEventListener('click', function() {
+            showSection(button.section);
+        });
     });
-    document.getElementById('back-button-estilo').addEventListener('click', function() {
-        showSection('sub-ancestral');
+}
+
+function addNextButtonListeners() {
+    document.getElementById('next-button-classe').addEventListener('click', function() {
+        if (state.selectedClasse) {
+            fetchSubClassesByClasse(state.selectedClasse);
+            showSection('sub-classe');
+        }
     });
-    document.getElementById('back-button-classe').addEventListener('click', function() {
-        showSection('estilo');
+
+    document.getElementById('next-button-atributos-pericias').addEventListener('click', function() {
+        if (state.selectedAncestral && state.selectedSubAncestral && state.selectedEstilo && state.selectedClasse && state.selectedSubClasse1 && state.selectedSubClasse2 && state.selectedGuilda && state.selectedProfissao) {
+            console.log('Next button clicked');
+            populateResumoSection();
+            showSection('resumo');
+        }
     });
-    document.getElementById('back-button-sub-classe').addEventListener('click', function() {
-        showSection('classe');
+
+    document.getElementById('next-button-ancestral').addEventListener('click', function() {
+        if (state.selectedAncestral) {
+            console.log('Next button clicked');
+            showSection('sub-ancestral');
+        }
     });
-    document.getElementById('back-button-guilda').addEventListener('click', function() {
-        showSection('sub-classe');
+
+    document.getElementById('next-button-sub-ancestral').addEventListener('click', function() {
+        if (state.selectedAncestral && state.selectedSubAncestral) {
+            console.log(`Selected ancestral: ${state.selectedAncestralName}`);
+            console.log(`Selected sub-ancestral: ${state.selectedSubAncestralName}`);
+            showSection('estilo');
+        }
     });
-    document.getElementById('back-button-profissao').addEventListener('click', function() {
+
+    document.getElementById('next-button-estilo').addEventListener('click', function() {
+        if (state.selectedEstilo) {
+            console.log('Next button clicked');
+            showSection('classe');
+            fetchClassesByEstilo(state.selectedEstilo);
+        }
+    });
+
+    document.getElementById('next-button-sub-classe').addEventListener('click', function() {
+        if (state.obligatoryElement && state.obligatoryElement !== "null") {
+            const obligatoryElementSelected = 
+                (state.selectedSubClasse1Element == state.obligatoryElement) ||
+                (state.selectedSubClasse2Element == state.obligatoryElement);
+
+            if (!obligatoryElementSelected) {
+                alert(`Uma das sub-classes deve ser do elemento obrigatório: ${state.obligatoryElementName}`);
+                return;
+            }
+        }
+        
+        console.log(`Selected Sub-Classe 1: ${state.selectedSubClasse1Name}`);
+        console.log(`Selected Sub-Classe 2: ${state.selectedSubClasse2Name}`);
         showSection('guilda');
     });
 
-    // Adicionar evento ao botão "Next" da classe
-    document.getElementById('next-button-classe').addEventListener('click', function() {
-        if (selectedClasse) {
-            fetchSubClassesByClasse(selectedClasse);
+    document.getElementById('next-button-guilda').addEventListener('click', function() {
+        if (state.selectedGuilda) {
+            console.log(`Selected guilda: ${state.selectedGuildaName}`);
+            showSection('profissao');
+            fetchProfissoesByGuilda(state.selectedGuilda);
         }
     });
-});
+
+    document.getElementById('confirm-button-profissao').addEventListener('click', function() {
+        if (state.selectedProfissao) {
+            console.log(`Selected Profissao: ${state.selectedProfissaoName}`);
+            showSection('atributos-pericias');
+            fetchPericias();
+        }
+    });
+}
+
+function addIncrementDecrementListeners() {
+    document.querySelectorAll('.increment').forEach(button => {
+        button.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            incrementAttribute(target);
+        });
+    });
+
+    document.querySelectorAll('.decrement').forEach(button => {
+        button.addEventListener('click', function() {
+            const target = this.getAttribute('data-target');
+            decrementAttribute(target);
+        });
+    });
+}
+
+function addCardSelectionListeners() {
+    document.querySelectorAll('.card[data-ancestral]').forEach(card => {
+        card.addEventListener('click', function() {
+            state.selectedAncestral = this.getAttribute('data-ancestral');
+            state.selectedAncestralName = this.querySelector('h2').innerText;
+            state.obligatoryElement = this.getAttribute('data-elemento-obrigatorio');
+            console.log(`Selected Ancestral: ${state.selectedAncestralName}`);
+            document.querySelectorAll('.card[data-ancestral]').forEach(c => c.classList.remove('selected-card'));
+            this.classList.add('selected-card');
+            document.getElementById('next-button-ancestral').classList.remove('hidden');
+        });
+    });
+
+    document.querySelectorAll('.card[data-estilo]').forEach(card => {
+        card.addEventListener('click', function() {
+            state.selectedEstilo = this.getAttribute('data-estilo');
+            state.selectedEstiloName = this.querySelector('h2').innerText;
+            console.log(`Selected Estilo: ${state.selectedEstiloName}`);
+            document.querySelectorAll('.card[data-estilo]').forEach(c => c.classList.remove('selected-card'));
+            this.classList.add('selected-card');
+            document.getElementById('next-button-estilo').classList.remove('hidden');
+        });
+    });
+
+    // Adicionar outros listeners de seleção de cards conforme necessário
+}
 
 function showSection(section) {
     document.querySelectorAll('.navbar a').forEach(link => {
@@ -60,32 +181,17 @@ function showSection(section) {
     document.getElementById(`${section}-section`).classList.remove('hidden');
 
     if (section === 'sub-ancestral') {
-        fetchSubAncestries(selectedAncestral);
+        fetchSubAncestries(state.selectedAncestral);
     } else if (section === 'classe') {
-        fetchClassesByEstilo(selectedEstilo);
+        fetchClassesByEstilo(state.selectedEstilo);
     } else if (section === 'guilda') {
         fetchGuildas();
     } else if (section === 'profissao') {
-        fetchProfissoesByGuilda(selectedGuilda);
+        fetchProfissoesByGuilda(state.selectedGuilda);
+    } else if (section === 'atributos-pericias') {
+        fetchPericias();
     }
 }
-
-document.querySelectorAll('.card[data-ancestral]').forEach(card => {
-    card.addEventListener('click', function() {
-        selectedAncestral = this.getAttribute('data-ancestral');
-        console.log(`Selected Ancestral: ${selectedAncestral}`);
-        document.querySelectorAll('.card[data-ancestral]').forEach(c => c.classList.remove('selected-card'));
-        this.classList.add('selected-card');
-        document.getElementById('next-button-ancestral').classList.remove('hidden');
-    });
-});
-
-document.getElementById('next-button-ancestral').addEventListener('click', function() {
-    if (selectedAncestral) {
-        console.log('Next button clicked');
-        showSection('sub-ancestral');
-    }
-});
 
 function fetchSubAncestries(ancestral) {
     console.log(`Fetching sub-ancestries for: ${ancestral}`);
@@ -98,15 +204,21 @@ function fetchSubAncestries(ancestral) {
             data.forEach(sub => {
                 const card = document.createElement('div');
                 card.classList.add('card');
-                card.setAttribute('data-sub-ancestral', sub.name);
+                card.setAttribute('data-sub-ancestral', sub.id);
+                card.setAttribute('data-elemento', sub.elemento_id);
+                card.setAttribute('data-elemento-name', sub.elemento_name);
                 card.innerHTML = `
+                    <img src="${sub.image_url}" alt="${sub.name}">
                     <h2>${sub.name}</h2>
                 `;
                 container.appendChild(card);
 
                 card.addEventListener('click', function() {
-                    selectedSubAncestral = this.getAttribute('data-sub-ancestral');
-                    console.log(`Selected Sub-Ancestral: ${selectedSubAncestral}`);
+                    state.selectedSubAncestral = this.getAttribute('data-sub-ancestral');
+                    state.selectedSubAncestralName = sub.name;
+                    state.obligatoryElement = this.getAttribute('data-elemento');
+                    state.obligatoryElementName = this.getAttribute('data-elemento-name');
+                    console.log(`Selected Sub-Ancestral: ${state.selectedSubAncestralName}, Elemento: ${state.obligatoryElement}`);
                     document.querySelectorAll('.card[data-sub-ancestral]').forEach(c => c.classList.remove('selected-card'));
                     this.classList.add('selected-card');
                     document.getElementById('next-button-sub-ancestral').disabled = false;
@@ -118,33 +230,6 @@ function fetchSubAncestries(ancestral) {
         .catch(error => console.error('Error fetching sub-ancestries:', error));
 }
 
-document.getElementById('next-button-sub-ancestral').addEventListener('click', function() {
-    if (selectedAncestral && selectedSubAncestral) {
-        console.log(`Selected ancestral: ${selectedAncestral}`);
-        console.log(`Selected sub-ancestral: ${selectedSubAncestral}`);
-        showSection('estilo');
-    }
-});
-
-document.querySelectorAll('.card[data-estilo]').forEach(card => {
-    card.addEventListener('click', function() {
-        selectedEstilo = this.getAttribute('data-estilo');
-        selectedEstiloName = this.querySelector('h2').innerText; // Capture the name
-        console.log(`Selected Estilo: ${selectedEstiloName}`);
-        document.querySelectorAll('.card[data-estilo]').forEach(c => c.classList.remove('selected-card'));
-        this.classList.add('selected-card');
-        document.getElementById('next-button-estilo').classList.remove('hidden');
-    });
-});
-
-document.getElementById('next-button-estilo').addEventListener('click', function() {
-    if (selectedEstilo) {
-        console.log('Next button clicked');
-        showSection('classe');
-        fetchClassesByEstilo(selectedEstilo);
-    }
-});
-
 function fetchClassesByEstilo(estilo) {
     console.log(`Fetching classes for estilo: ${estilo}`);
     fetch(`/get_classes_by_estilo/${estilo}`)
@@ -152,7 +237,7 @@ function fetchClassesByEstilo(estilo) {
         .then(data => {
             console.log('Classes data received:', data);
             const container = document.getElementById('classe-cards');
-            container.innerHTML = '';  // Clear previous content
+            container.innerHTML = '';
             if (data.length > 0) {
                 data.forEach(classe => {
                     console.log('Adding class:', classe);
@@ -166,13 +251,13 @@ function fetchClassesByEstilo(estilo) {
                     container.appendChild(card);
 
                     card.addEventListener('click', function() {
-                        selectedClasse = this.getAttribute('data-classe');
-                        selectedClasseName = classe.name; // Capture the name
-                        console.log(`Selected Classe: ${selectedClasseName}`);
+                        state.selectedClasse = this.getAttribute('data-classe');
+                        state.selectedClasseName = classe.name;
+                        console.log(`Selected Classe: ${state.selectedClasseName}`);
                         document.querySelectorAll('.card[data-classe]').forEach(c => c.classList.remove('selected-card'));
                         this.classList.add('selected-card');
                         document.getElementById('next-button-classe').classList.remove('hidden');
-                        document.getElementById('next-button-classe').disabled = false;  // Enable the button
+                        document.getElementById('next-button-classe').disabled = false;
                     });
                 });
             } else {
@@ -182,14 +267,6 @@ function fetchClassesByEstilo(estilo) {
         .catch(error => console.error('Error fetching classes:', error));
 }
 
-document.getElementById('next-button-classe').addEventListener('click', function() {
-    if (selectedClasse) {
-        console.log(`Selected classe: ${selectedClasse}`);
-        showSection('sub-classe');  // Move to the sub-classe section
-        fetchSubClassesByClasse(selectedClasse);
-    }
-});
-
 function fetchSubClassesByClasse(classeId) {
     fetch(`/get_sub_classes_by_classe/${classeId}`)
         .then(response => response.json())
@@ -197,11 +274,9 @@ function fetchSubClassesByClasse(classeId) {
             const container = document.getElementById('sub-classe-container');
             container.innerHTML = '';
 
-            // Obter os tipos únicos das sub-classes e seus nomes
             const types = data.types;
             console.log('Types found:', types);
 
-            // Criar seções dinâmicas para cada tipo
             types.forEach((type, index) => {
                 const section = document.createElement('div');
                 section.classList.add('sub-classe-section');
@@ -211,33 +286,64 @@ function fetchSubClassesByClasse(classeId) {
                 `;
                 container.appendChild(section);
 
-                // Adicionar cards às seções correspondentes
                 data.sub_classes.filter(subClasse => subClasse.tipo_id === type.id).forEach(subClasse => {
                     const card = document.createElement('div');
                     card.classList.add('card');
                     card.setAttribute('data-sub-classe', subClasse.id);
+                    card.setAttribute('data-elemento', subClasse.elemento_id);
                     card.innerHTML = `
                         <h2>${subClasse.name}</h2>
-                        <p>${subClasse.description}</p>
+                        <img src="${subClasse.image_url}" alt="${subClasse.name}" class="sub-classe-image" />
                     `;
+
+                    if (subClasse.elemento_id == state.obligatoryElement && !obligatoryElementSelected()) {
+                        card.classList.add('obrigatoria');
+                    }
+
                     section.querySelector('.sub-classe-container').appendChild(card);
 
                     card.addEventListener('click', function() {
-                        if (index === 0) {
-                            selectedSubClasse1 = this.getAttribute('data-sub-classe');
-                            selectedSubClasse1Name = subClasse.name; // Capture the name
-                            document.querySelectorAll(`#sub-classe-cards-tipo-${index} .card`).forEach(c => c.classList.remove('selected-card'));
-                            this.classList.add('selected-card');
-                            console.log(`Selected Sub-Classe 1: ${selectedSubClasse1Name}`);
-                        } else {
-                            selectedSubClasse2 = this.getAttribute('data-sub-classe');
-                            selectedSubClasse2Name = subClasse.name; // Capture the name
-                            document.querySelectorAll(`#sub-classe-cards-tipo-${index} .card`).forEach(c => c.classList.remove('selected-card'));
-                            this.classList.add('selected-card');
-                            console.log(`Selected Sub-Classe 2: ${selectedSubClasse2Name}`);
+                        const subClasseId = this.getAttribute('data-sub-classe');
+                        const subClasseElement = this.getAttribute('data-elemento');
+
+                        if ((index === 0 && subClasseId === state.selectedSubClasse2) || (index === 1 && subClasseId === state.selectedSubClasse1)) {
+                            alert('Você não pode selecionar a mesma sub-classe para ambos os tipos.');
+                            return;
                         }
 
-                        if (selectedSubClasse1 && selectedSubClasse2) {
+                        if (index === 0) {
+                            if (state.selectedSubClasse1) {
+                                document.querySelectorAll(`#sub-classe-cards-tipo-1 .card[data-sub-classe="${state.selectedSubClasse1}"]`).forEach(c => c.classList.remove('disabled-card'));
+                            }
+                            state.selectedSubClasse1 = subClasseId;
+                            state.selectedSubClasse1Element = subClasseElement;
+                            state.selectedSubClasse1Name = subClasse.name;
+                            document.querySelectorAll(`#sub-classe-cards-tipo-0 .card`).forEach(c => c.classList.remove('selected-card'));
+                            this.classList.add('selected-card');
+                            document.querySelectorAll(`#sub-classe-cards-tipo-1 .card[data-sub-classe="${subClasseId}"]`).forEach(c => c.classList.add('disabled-card'));
+                            console.log(`Selected Sub-Classe 1: ${state.selectedSubClasse1Name}`);
+                        } else {
+                            if (state.selectedSubClasse2) {
+                                document.querySelectorAll(`#sub-classe-cards-tipo-0 .card[data-sub-classe="${state.selectedSubClasse2}"]`).forEach(c => c.classList.remove('disabled-card'));
+                            }
+                            state.selectedSubClasse2 = subClasseId;
+                            state.selectedSubClasse2Element = subClasseElement;
+                            state.selectedSubClasse2Name = subClasse.name;
+                            document.querySelectorAll(`#sub-classe-cards-tipo-1 .card`).forEach(c => c.classList.remove('selected-card'));
+                            this.classList.add('selected-card');
+                            document.querySelectorAll(`#sub-classe-cards-tipo-0 .card[data-sub-classe="${subClasseId}"]`).forEach(c => c.classList.add('disabled-card'));
+                            console.log(`Selected Sub-Classe 2: ${state.selectedSubClasse2Name}`);
+                        }
+
+                        const obligatorySelected = obligatoryElementSelected();
+
+                        if (obligatorySelected) {
+                            document.querySelectorAll('.card.obrigatoria').forEach(c => c.classList.remove('obrigatoria'));
+                        } else {
+                            document.querySelectorAll('.card[data-elemento="'+ state.obligatoryElement +'"]').forEach(c => c.classList.add('obrigatoria'));
+                        }
+
+                        if (state.selectedSubClasse1 && state.selectedSubClasse2) {
                             document.getElementById('next-button-sub-classe').classList.remove('hidden');
                             document.getElementById('next-button-sub-classe').disabled = false;
                         }
@@ -248,38 +354,12 @@ function fetchSubClassesByClasse(classeId) {
         .catch(error => console.error('Error fetching sub-classes:', error));
 }
 
-function checkSubClassSelections() {
-    const nextButton = document.getElementById('next-button-sub-classe');
-    if (selectedSubClasse1 && selectedSubClasse2) {
-        nextButton.disabled = false;
-        nextButton.classList.remove('hidden');
-    } else {
-        nextButton.disabled = true;
-        nextButton.classList.add('hidden');
-    }
+function obligatoryElementSelected() {
+    return (
+        document.querySelector(`#sub-classe-cards-tipo-0 .selected-card[data-elemento="${state.obligatoryElement}"]`) ||
+        document.querySelector(`#sub-classe-cards-tipo-1 .selected-card[data-elemento="${state.obligatoryElement}"]`)
+    );
 }
-
-function checkAllSelections() {
-    if (selectedType1SubClasse && selectedType2SubClasse) {
-        document.getElementById('next-button-sub-classe').disabled = false;
-    } else {
-        document.getElementById('next-button-sub-classe').disabled = true;
-    }
-
-    if (selectedGuilda && selectedProfissao) {
-        document.getElementById('confirm-button-profissao').disabled = false;
-    } else {
-        document.getElementById('confirm-button-profissao').disabled = true;
-    }
-}
-
-document.getElementById('next-button-sub-classe').addEventListener('click', function() {
-    if (selectedSubClasse1 && selectedSubClasse2) {
-        console.log(`Selected Sub-Classe 1: ${selectedSubClasse1}`);
-        console.log(`Selected Sub-Classe 2: ${selectedSubClasse2}`);
-        showSection('guilda');
-    }
-});
 
 function fetchGuildas() {
     console.log('Fetching guildas');
@@ -288,13 +368,13 @@ function fetchGuildas() {
         .then(data => {
             console.log('Guildas data received:', data);
             const container = document.getElementById('guilda-cards');
-            container.innerHTML = '';  // Clear previous content
+            container.innerHTML = '';
             if (data.length > 0) {
                 data.forEach(guilda => {
                     console.log('Adding guilda:', guilda);
                     const card = document.createElement('div');
                     card.classList.add('card');
-                    card.setAttribute('data-guilda', guilda.name);
+                    card.setAttribute('data-guilda', guilda.id);
                     card.innerHTML = `
                         <h2>${guilda.name}</h2>
                         <p>${guilda.description}</p>
@@ -302,8 +382,9 @@ function fetchGuildas() {
                     container.appendChild(card);
 
                     card.addEventListener('click', function() {
-                        selectedGuilda = this.getAttribute('data-guilda');
-                        console.log(`Selected Guilda: ${selectedGuilda}`);
+                        state.selectedGuilda = this.getAttribute('data-guilda');
+                        state.selectedGuildaName = guilda.name;
+                        console.log(`Selected Guilda: ${state.selectedGuildaName}`);
                         document.querySelectorAll('.card[data-guilda]').forEach(c => c.classList.remove('selected-card'));
                         this.classList.add('selected-card');
                         document.getElementById('next-button-guilda').classList.remove('hidden');
@@ -316,22 +397,6 @@ function fetchGuildas() {
         .catch(error => console.error('Error fetching guildas:', error));
 }
 
-document.getElementById('next-button-guilda').addEventListener('click', function() {
-    if (selectedGuilda) {
-        console.log(`Selected guilda: ${selectedGuilda}`);
-        showSection('profissao');
-        fetchProfissoesByGuilda(selectedGuilda);
-    }
-});
-
-document.getElementById('confirm-button-profissao').addEventListener('click', function() {
-    if (selectedProfissao) {
-        console.log(`Selected Profissao: ${selectedProfissao}`);
-        showSection('resumo');
-        populateResumoSection();
-    }
-});
-
 function fetchProfissoesByGuilda(guilda) {
     console.log(`Fetching profissoes for guilda: ${guilda}`);
     fetch(`/get_profissoes_by_guilda/${guilda}`)
@@ -339,7 +404,7 @@ function fetchProfissoesByGuilda(guilda) {
         .then(data => {
             console.log('Profissoes data received:', data);
             const container = document.getElementById('profissao-cards');
-            container.innerHTML = '';  // Clear previous content
+            container.innerHTML = '';
             if (data.length > 0) {
                 data.forEach(profissao => {
                     console.log('Adding profissao:', profissao);
@@ -353,12 +418,13 @@ function fetchProfissoesByGuilda(guilda) {
                     container.appendChild(card);
 
                     card.addEventListener('click', function() {
-                        selectedProfissao = profissao.name;  // Capture the name instead of the id
-                        console.log(`Selected Profissao: ${selectedProfissao}`);
+                        state.selectedProfissao = this.getAttribute('data-profissao');
+                        state.selectedProfissaoName = profissao.name;
+                        console.log(`Selected Profissao: ${state.selectedProfissaoName}`);
                         document.querySelectorAll('.card[data-profissao]').forEach(c => c.classList.remove('selected-card'));
                         this.classList.add('selected-card');
                         document.getElementById('confirm-button-profissao').classList.remove('hidden');
-                        document.getElementById('confirm-button-profissao').disabled = false;  // Enable the button
+                        document.getElementById('confirm-button-profissao').disabled = false;
                     });
                 });
             } else {
@@ -368,19 +434,386 @@ function fetchProfissoesByGuilda(guilda) {
         .catch(error => console.error('Error fetching profissoes:', error));
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPericias();
+});
+
+function fetchPericias() {
+    const profissaoId = state.selectedProfissao;
+    const ancestryId = state.selectedAncestral;
+    const subAncestryId = state.selectedSubAncestral;
+
+    const atributos = {
+        forca: parseInt(document.getElementById('forca-value').textContent, 10),
+        agilidade: parseInt(document.getElementById('agilidade-value').textContent, 10),
+        inteligencia: parseInt(document.getElementById('inteligencia-value').textContent, 10),
+        presenca: parseInt(document.getElementById('presenca-value').textContent, 10)
+    };
+
+    // Função auxiliar para calcular o bônus
+    function calcularBonus(atributoId, treinada) {
+        const nivel = parseInt(document.getElementById('nivel-value').textContent);
+        const proficiencia = 3 + Math.floor((nivel) / 5);
+        let atributoValor;
+        switch (atributoId) {
+            case 1:
+                atributoValor = atributos.forca;
+                break;
+            case 2:
+                atributoValor = atributos.agilidade;
+                break;
+            case 3:
+                atributoValor = atributos.inteligencia;
+                break;
+            case 4:
+                atributoValor = atributos.presenca;
+                break;
+            default:
+                atributoValor = 0;
+        }
+        return treinada ? atributoValor + proficiencia : atributoValor;
+    }
+
+    // Fetch pericias by profissão
+    fetch(`/get_pericias_by_profissao/${profissaoId}`)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('profissao-pericias-container');
+            container.innerHTML = '';
+            state.selectedProfissaoPericias = data.pericias;
+            state.profissaoPericiasBloqueadas = data.pericias.map(p => p.id);
+
+            data.pericias.forEach(pericia => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'profissao_pericias';
+                checkbox.value = pericia.id;
+                checkbox.disabled = true;
+                checkbox.checked = true;
+                checkbox.classList.add('trained-checkbox', 'profession-trained');
+
+                const label = document.createElement('label');
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(pericia.name));
+
+                container.appendChild(label);
+                container.appendChild(document.createElement('br'));
+            });
+
+            document.getElementById('next-button-atributos-pericias').classList.remove('hidden');
+        });
+
+    // Fetch pericias by ancestry
+    fetch(`/get_pericias_by_ancestry/${ancestryId}/${subAncestryId}`)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('ancestry-pericias-container');
+            container.innerHTML = '';
+            data.pericias.forEach(pericia => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'ancestry_pericias';
+                checkbox.value = pericia.id;
+                checkbox.classList.add('trained-checkbox');
+
+                if (state.profissaoPericiasBloqueadas.includes(pericia.id)) {
+                    checkbox.disabled = true;
+                    checkbox.checked = true;
+                    checkbox.classList.add('profession-trained');
+                }
+
+                checkbox.addEventListener('change', function() {
+                    // Desmarcar a seleção anterior na lista de todas as perícias
+                    const previousSelection = state.selectedAncestryPericias.length > 0 ? state.selectedAncestryPericias[0] : null;
+                    if (previousSelection) {
+                        const previousCheckbox = document.querySelector(`#coordenacao-pericias-todas [data-pericia-id="${previousSelection.id}"], #sabedoria-pericias-todas [data-pericia-id="${previousSelection.id}"], #social-pericias-todas [data-pericia-id="${previousSelection.id}"], #percepcao-pericias-todas [data-pericia-id="${previousSelection.id}"]`);
+                        if (previousCheckbox) {
+                            previousCheckbox.checked = false;
+                            previousCheckbox.classList.remove('ancestry-trained');
+                        }
+                    }
+
+                    if (this.checked) {
+                        state.selectedAncestryPericias = [{ id: pericia.id, name: pericia.name }];
+                        this.classList.add('ancestry-trained');
+                    } else {
+                        state.selectedAncestryPericias = [];
+                        this.classList.remove('ancestry-trained');
+                    }
+                    document.querySelectorAll('input[name="ancestry_pericias"]').forEach(cb => {
+                        if (cb !== this) cb.checked = false;
+                    });
+
+                    document.querySelectorAll('input[name="ancestry_pericias"]').forEach(cb => {
+                        if (state.profissaoPericiasBloqueadas.includes(parseInt(cb.value))) {
+                            cb.disabled = true;
+                            cb.checked = true;
+                        }
+                    });
+
+                    // Atualizar a lista de todas as perícias
+                    updateAllPericiasFromAncestry();
+                    updatePericiaBonuses(); // Adicionado aqui também
+                });
+
+                const label = document.createElement('label');
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(pericia.name));
+
+                container.appendChild(label);
+                container.appendChild(document.createElement('br'));
+            });
+        });
+    // Fetch all pericias
+    fetch(`/get_all_pericias`)
+    .then(response => response.json())
+    .then(data => {
+        const coordenacaoContainer = document.getElementById('coordenacao-pericias-todas');
+        const sabedoriaContainer = document.getElementById('sabedoria-pericias-todas');
+        const socialContainer = document.getElementById('social-pericias-todas');
+        const percepcaoContainer = document.getElementById('percepcao-pericias-todas');
+
+        coordenacaoContainer.innerHTML = '';
+        sabedoriaContainer.innerHTML = '';
+        socialContainer.innerHTML = '';
+        percepcaoContainer.innerHTML = '';
+
+        const atributos = data.atributos.reduce((acc, atributo) => {
+            acc[atributo.id] = atributo.name.substring(0, 3);
+            return acc;
+        }, {});
+
+        data.pericias.forEach(pericia => {
+            const label = document.createElement('label');
+            label.setAttribute('data-atributo-id', pericia.atributo_id);
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.classList.add('trained-checkbox');
+            checkbox.setAttribute('data-pericia-id', pericia.id);
+            checkbox.disabled = true;
+
+            if (state.profissaoPericiasBloqueadas.includes(pericia.id)) {
+                checkbox.checked = true;
+                checkbox.classList.add('profession-trained');
+            } else if (state.selectedAncestryPericias.some(p => p.id === pericia.id)) {
+                checkbox.checked = true;
+                checkbox.classList.add('ancestry-trained');
+            }
+
+            const atributoNome = atributos[pericia.atributo_id] || 'Desconhecido';
+            const bonus = calcularBonus(pericia.atributo_id, checkbox.checked && checkbox.classList.contains('ancestry-trained') || checkbox.classList.contains('profession-trained'));
+            const d20Count = calcularD20(bonus);
+
+            const spanAtributo = document.createElement('span');
+            spanAtributo.classList.add('atributo');
+            spanAtributo.textContent = `(${atributoNome.substring(0, 3)})`;
+
+            const spanPericia = document.createElement('span');
+            spanPericia.classList.add('pericia');
+            spanPericia.textContent = pericia.name;
+
+            const spanBonus = document.createElement('span');
+            spanBonus.classList.add('bonus-text');
+            spanBonus.textContent = `(+${bonus})`;
+
+            const spanD20 = document.createElement('span');
+            spanD20.classList.add('d20-text');
+            spanD20.textContent = `(${d20Count})`;
+
+            label.appendChild(checkbox);
+            label.appendChild(spanAtributo);
+            label.appendChild(spanPericia);
+            label.appendChild(spanBonus);
+            label.appendChild(spanD20);
+
+            switch (pericia.tipo_id) {
+                case 1:
+                    coordenacaoContainer.appendChild(label);
+                    break;
+                case 2:
+                    sabedoriaContainer.appendChild(label);
+                    break;
+                case 3:
+                    socialContainer.appendChild(label);
+                    break;
+                case 4:
+                    percepcaoContainer.appendChild(label);
+                    break;
+            }
+        });
+
+        updatePericiaBonuses();
+    })
+    .catch(error => {
+        console.error('Error fetching pericias or atributos:', error);
+    });
+
+}
+ 
+function updateAllPericiasFromAncestry() {
+    const allPericiasCheckboxes = document.querySelectorAll('#coordenacao-pericias-todas .trained-checkbox, #sabedoria-pericias-todas .trained-checkbox, #social-pericias-todas .trained-checkbox, #percepcao-pericias-todas .trained-checkbox');
+    allPericiasCheckboxes.forEach(checkbox => {
+        const periciaId = parseInt(checkbox.getAttribute('data-pericia-id'));
+
+        // Verificar se a perícia está na lista de profissões bloqueadas
+        if (state.profissaoPericiasBloqueadas.includes(periciaId)) {
+            checkbox.checked = true;
+            checkbox.classList.add('profession-trained');
+            checkbox.disabled = true;
+            return; // Continuar para a próxima iteração
+        }
+
+        // Verificar se a perícia está na lista de ancestralidade selecionada
+        if (state.selectedAncestryPericias.some(p => p.id === periciaId)) {
+            checkbox.checked = true;
+            checkbox.classList.add('ancestry-trained');
+        } else {
+            checkbox.checked = false;
+            checkbox.classList.remove('ancestry-trained');
+        }
+    });
+}
+
+// Função auxiliar para calcular o bônus
+function calcularBonus(atributoId, treinada) {
+    const nivel = parseInt(document.getElementById('nivel-value').textContent);
+    const proficiencia = 3 + Math.floor((nivel) / 5);
+    const atributos = {
+        1: parseInt(document.getElementById('forca-value').textContent, 10),
+        2: parseInt(document.getElementById('agilidade-value').textContent, 10),
+        3: parseInt(document.getElementById('inteligencia-value').textContent, 10),
+        4: parseInt(document.getElementById('presenca-value').textContent, 10)
+    };
+
+    return treinada ? atributos[atributoId] + proficiencia : atributos[atributoId];
+}
+
+function updatePericiaBonuses() {
+    const allPericiasLabels = document.querySelectorAll('#coordenacao-pericias-todas label, #sabedoria-pericias-todas label, #social-pericias-todas label, #percepcao-pericias-todas label');
+    allPericiasLabels.forEach(label => {
+        const atributoId = parseInt(label.getAttribute('data-atributo-id'));
+        const checkbox = label.querySelector('.trained-checkbox');
+        const spanBonus = label.querySelector('.bonus-text');
+        const spanD20 = label.querySelector('.d20-text');
+
+        const atributos = {
+            1: parseInt(document.getElementById('forca-value').textContent, 10),
+            2: parseInt(document.getElementById('agilidade-value').textContent, 10),
+            3: parseInt(document.getElementById('inteligencia-value').textContent, 10),
+            4: parseInt(document.getElementById('presenca-value').textContent, 10)
+        };
+        const atributoValor = atributos[atributoId];
+
+        const bonus = calcularBonus(atributoId, checkbox.checked && (checkbox.classList.contains('ancestry-trained') || checkbox.classList.contains('profession-trained')));
+        const d20Count = calcularD20(atributoValor, checkbox.checked);
+
+        spanBonus.textContent = `(+${bonus})`;
+        spanD20.textContent = `(${d20Count})`;
+    });
+}
+
+function calcularD20(atributoValor, treinada) {
+    if (atributoValor === 0) {
+        return '-1';
+    }
+    const d20Count = treinada ? 1 + Math.floor(atributoValor / 3) : 1;
+    return `${d20Count}`;
+}
+
+function incrementAttribute(attribute) {
+    const input = document.getElementById(attribute + '-value');
+    let value = parseInt(input.textContent);
+    const maxAttributeValue = updateMaxAttributeValue();
+
+    if (attribute === 'nivel') {
+        if (value < 30) {
+            value += 1;
+            input.textContent = value;
+            updatePontosRestantes();
+            updatePericiaBonuses(); // Adicione esta linha
+        }
+    } else {
+        if (value < maxAttributeValue && state.pontosRestantes > 0) {
+            value += 1;
+            input.textContent = value;
+            state.pontosRestantes -= 1;
+            updatePontosRestantes();
+            updatePericiaBonuses(); // Adicione esta linha
+        }
+    }
+}
+
+function decrementAttribute(attribute) {
+    const input = document.getElementById(attribute + '-value');
+    let value = parseInt(input.textContent);
+
+    if (attribute === 'nivel') {
+        if (value > 1) {
+            value -= 1;
+            input.textContent = value;
+            updatePontosRestantes();
+            updatePericiaBonuses(); // Adicione esta linha
+        }
+    } else {
+        if (value > 1 || (value === 1 && countZeroAttributes() < 1)) {
+            value -= 1;
+            input.textContent = value;
+            state.pontosRestantes += 1;
+            updatePontosRestantes();
+            updatePericiaBonuses(); // Adicione esta linha
+        }
+    }
+}
+
+function countZeroAttributes() {
+    const attributes = ['forca', 'agilidade', 'inteligencia', 'presenca'];
+    let zeroCount = 0;
+
+    attributes.forEach(attr => {
+        const value = parseInt(document.getElementById(attr + '-value').textContent);
+        if (value === 0) {
+            zeroCount++;
+        }
+    });
+
+    return zeroCount;
+}
+
+function updatePontosRestantes() {
+    const nivel = parseInt(document.getElementById('nivel-value').textContent);
+    const basePontos = 3;
+    const pontosPorNivel = Math.floor(nivel / 5);
+
+    const forca = parseInt(document.getElementById('forca-value').textContent);
+    const agilidade = parseInt(document.getElementById('agilidade-value').textContent);
+    const inteligencia = parseInt(document.getElementById('inteligencia-value').textContent);
+    const presenca = parseInt(document.getElementById('presenca-value').textContent);
+
+    const pontosDistribuidos = (forca - 1) + (agilidade - 1) + (inteligencia - 1) + (presenca - 1);
+
+    state.pontosRestantes = basePontos + pontosPorNivel - pontosDistribuidos;
+    document.getElementById('pontos-restantes').innerText = state.pontosRestantes;
+}
+
+function updateMaxAttributeValue() {
+    const nivel = parseInt(document.getElementById('nivel-value').textContent);
+    return Math.min(3 + Math.floor(nivel / 5), 6);
+}
+
 function populateResumoSection() {
     const resumoContainer = document.getElementById('resumo-cards');
     resumoContainer.innerHTML = '';
 
     const sections = [
-        { title: 'Ancestral', value: selectedAncestral },
-        { title: 'Sub-Ancestral', value: selectedSubAncestral },
-        { title: 'Estilo', value: selectedEstiloName },
-        { title: 'Classe', value: selectedClasseName },
-        { title: 'Sub-Classe 1', value: selectedSubClasse1Name },
-        { title: 'Sub-Classe 2', value: selectedSubClasse2Name },
-        { title: 'Guilda', value: selectedGuilda },
-        { title: 'Profissao', value: selectedProfissao }
+        { title: 'Ancestral', value: state.selectedAncestralName },
+        { title: 'Sub-Ancestral', value: state.selectedSubAncestralName },
+        { title: 'Estilo', value: state.selectedEstiloName },
+        { title: 'Classe', value: state.selectedClasseName },
+        { title: 'Sub-Classe 1', value: state.selectedSubClasse1Name },
+        { title: 'Sub-Classe 2', value: state.selectedSubClasse2Name },
+        { title: 'Guilda', value: state.selectedGuildaName },
+        { title: 'Profissao', value: state.selectedProfissaoName }
     ];
 
     sections.forEach(section => {
@@ -392,67 +825,48 @@ function populateResumoSection() {
         `;
         resumoContainer.appendChild(card);
     });
-}
 
-document.getElementById('back-button-resumo').addEventListener('click', function() {
-    showSection('profissao');
-});
+    const periciaProfissaoSection = document.createElement('div');
+    periciaProfissaoSection.classList.add('card');
+    periciaProfissaoSection.innerHTML = `
+        <h2>Perícias da Profissão</h2>
+        ${state.selectedProfissaoPericias.map(p => `<p>${p.name}</p>`).join('')}
+    `;
+    resumoContainer.appendChild(periciaProfissaoSection);
 
-function preencherResumo() {
-    document.getElementById('resumo-ancestral').innerHTML = `
-        <h2>Ancestral</h2>
-        <p>${selectedAncestral}</p>
+    const periciaAncestrySection = document.createElement('div');
+    periciaAncestrySection.classList.add('card');
+    periciaAncestrySection.innerHTML = `
+        <h2>Perícias do Ancestral</h2>
+        ${state.selectedAncestryPericias.map(p => `<p>${p.name}</p>`).join('')}
     `;
-    document.getElementById('resumo-sub-ancestral').innerHTML = `
-        <h2>Sub-Ancestral</h2>
-        <p>${selectedSubAncestral}</p>
-    `;
-    document.getElementById('resumo-estilo').innerHTML = `
-        <h2>Estilo</h2>
-        <p>${selectedEstilo}</p>
-    `;
-    document.getElementById('resumo-classe').innerHTML = `
-        <h2>Classe</h2>
-        <p>${selectedClasse}</p>
-    `;
-    document.getElementById('resumo-sub-classe1').innerHTML = `
-        <h2>Sub-Classe 1</h2>
-        <p>${selectedSubClasse1}</p>
-    `;
-    document.getElementById('resumo-sub-classe2').innerHTML = `
-        <h2>Sub-Classe 2</h2>
-        <p>${selectedSubClasse2}</p>
-    `;
-    document.getElementById('resumo-guilda').innerHTML = `
-        <h2>Guilda</h2>
-        <p>${selectedGuilda}</p>
-    `;
-    document.getElementById('resumo-profissao').innerHTML = `
-        <h2>Profissão</h2>
-        <p>${selectedProfissao}</p>
-    `;
+    resumoContainer.appendChild(periciaAncestrySection);
 }
 
 document.getElementById('create-character-button').addEventListener('click', function() {
-    const nomePersonagem = document.getElementById('nome-personagem').value;
-    if (!nomePersonagem) {
-        alert("Por favor, insira o nome do personagem.");
-        return;
-    }
+    const characterName = document.getElementById('nome-personagem').value;
+    const forca = document.getElementById('forca').value;
+    const agilidade = document.getElementById('agilidade').value;
+    const inteligencia = document.getElementById('inteligencia').value;
+    const presenca = document.getElementById('presenca').value;
 
     const characterData = {
-        nome: nomePersonagem,
-        ancestral: selectedAncestral,
-        subAncestral: selectedSubAncestral,
-        estilo: selectedEstilo,
-        classe: selectedClasse,
-        subClasse1: selectedSubClasse1,
-        subClasse2: selectedSubClasse2,
-        guilda: selectedGuilda,
-        profissao: selectedProfissao
+        name: characterName,
+        ancestry_id: state.selectedAncestral,
+        sub_ancestry_id: state.selectedSubAncestral,
+        estilo_id: state.selectedEstilo,
+        classe_id: state.selectedClasse,
+        sub_classe1_id: state.selectedSubClasse1,
+        sub_classe2_id: state.selectedSubClasse2,
+        guilda_id: state.selectedGuilda,
+        profissao_id: state.selectedProfissao,
+        forca: forca,
+        agilidade: agilidade,
+        inteligencia: inteligencia,
+        presenca: presenca
     };
 
-    fetch('/create_character', {
+    fetch('/criarpersonagem', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -462,14 +876,25 @@ document.getElementById('create-character-button').addEventListener('click', fun
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Personagem criado com sucesso!');
-            // Redirecionar ou limpar formulário se necessário
+            window.location.href = '/perfil';
         } else {
-            alert('Erro ao criar personagem: ' + data.error);
+            alert('Erro ao criar personagem.');
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Erro ao criar personagem.');
-    });
+    .catch(error => console.error('Error:', error));
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; cookies.length > i; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
