@@ -844,14 +844,8 @@ function populateResumoSection() {
 }
 
 document.getElementById('create-character-button').addEventListener('click', function() {
-    const characterName = document.getElementById('nome-personagem').value;
-    const forca = document.getElementById('forca').value;
-    const agilidade = document.getElementById('agilidade').value;
-    const inteligencia = document.getElementById('inteligencia').value;
-    const presenca = document.getElementById('presenca').value;
-
     const characterData = {
-        name: characterName,
+        name: document.getElementById('nome-personagem').value,
         ancestry_id: state.selectedAncestral,
         sub_ancestry_id: state.selectedSubAncestral,
         estilo_id: state.selectedEstilo,
@@ -860,10 +854,14 @@ document.getElementById('create-character-button').addEventListener('click', fun
         sub_classe2_id: state.selectedSubClasse2,
         guilda_id: state.selectedGuilda,
         profissao_id: state.selectedProfissao,
-        forca: forca,
-        agilidade: agilidade,
-        inteligencia: inteligencia,
-        presenca: presenca
+        attributes: {
+            forca: parseInt(document.getElementById('forca-value').textContent),
+            agilidade: parseInt(document.getElementById('agilidade-value').textContent),
+            inteligencia: parseInt(document.getElementById('inteligencia-value').textContent),
+            presenca: parseInt(document.getElementById('presenca-value').textContent)
+        },
+        profissao_pericias: state.selectedProfissaoPericias.map(p => p.id),
+        ancestry_pericias: state.selectedAncestryPericias.map(p => p.id)
     };
 
     fetch('/criarpersonagem', {

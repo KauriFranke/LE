@@ -1,13 +1,15 @@
 * {
     color: white;
 }
+
 body {
     position: relative;
     margin: 0;
     width: 100vw;
     height: 100%;
-    overflow-x: hidden; /* Permite rolar verticalmente */
+    overflow-x: hidden;
 }
+
 header {
     position: relative;
     display: flex;
@@ -17,76 +19,78 @@ header {
     padding-left: 20px;
     padding-right: 30px;
 }
+
 a {
     text-decoration: none;
     color: white;
     font-weight: 700;
 }
-h1 {
+
+h1, h2, h3, h4, h5 {
     color: white;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+p {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
-h2 {
-    display: flex;
-    justify-content: center;
-}
-h3 { 
-    display: flex;
-    justify-content: center;
-}
-h4 {
+span {
     color: white;
 }
 .clear {
     clear: both;
 }
+
 .break {
     flex-basis: 100%;
-    height: 0; /* Opcional: ajusta a altura para não adicionar espaço extra */
+    height: 0;
 }
+
 .criar {
     display: flex;
     justify-content: center;
 }
+
 .site {
     display: flex;
     position: relative;
     overflow: auto;
-    height: 100%; /* Permite que o conteúdo da página se expanda */
+    height: 100%;
 }
+
 .LeLogoNome {
     height: 70px;
     width: 100px;
 }
+
 .tdheader {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 100%;
     min-height: 73px;
 }
+
 .links {
     display: flex;
     gap: 10px;
 }
+
 .headerbuttons {
     display: flex;
     gap: 15px;
 }
-.logout {
+
+.logout, .play {
     color: white;
     border: none;
     background-color: black;
     font-weight: 700;
 }
-.play {
-    color: white;
-    border: none;
-    background-color: black;
-    font-weight: 700;
-}
+
 .backgroundsite {
     position: fixed;
     top: 0;
@@ -94,23 +98,18 @@ h4 {
     width: 100%;
     height: 100%;
 }
+
 .hidden {
     display: none;
 }
-.resumo_personagem {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    background-color: black;
-    border-radius: 10px;
-    opacity: 0.9;
-}
+
 .character-sheet {
     display: flex;
+    width: 100%;
 }
 
 .navbar {
-    height: 100vw;
+    height: 100vh;
     width: 200px;
     background-color: #2c2c2c;
     padding: 20px;
@@ -129,37 +128,63 @@ h4 {
 
 .content {
     flex-grow: 1;
-    padding: 20px;
+    padding: 10px 20px;
 }
+
 .caixaresumo {
+    text-align: center;
     padding: 5px;
     border: 2px solid white;
     font-size: 1.3rem;
 }
+
+p.caixaresumo {
+    margin: 5px 0;
+}
+
+.resumo_personagem {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas de tamanho igual */
+    grid-template-rows: repeat(2, auto); /* 2 linhas */
+    gap: 10px;
+    justify-content: center;
+    background-color: black;
+    border-radius: 10px;
+    padding: 10px; /* Adicionando preenchimento para melhor espaçamento */
+    width: 98%; /* Garantir que a div use toda a largura disponível */
+}
+
+.stats-box {
+    padding: 10px;
+    border: 2px solid white;
+    font-size: 1.1rem;
+}
+
 /* Estilizando a barra de rolagem para navegadores baseados em WebKit */
 ::-webkit-scrollbar {
-    width: 8px; /* Define a largura da barra de rolagem */
+    width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #2c2c2c; /* Cor do fundo da barra de rolagem */
+    background: #2c2c2c;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #555; /* Cor da parte "rolável" */
-    border-radius: 10px; /* Define bordas arredondadas */
-    border: 2px solid #2c2c2c; /* Espaço ao redor do "thumb" */
+    background-color: #555;
+    border-radius: 10px;
+    border: 2px solid #2c2c2c;
 }
 
 /* Para navegadores Firefox */
 html {
-    scrollbar-width: thin; /* Define a largura como fina */
-    scrollbar-color: #555 #2c2c2c; /* Cor do thumb e do track */
+    scrollbar-width: thin;
+    scrollbar-color: #555 #2c2c2c;
 }
+
 .element-info table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 10px ;
 }
 
 .element-info th, .element-info td {
@@ -175,7 +200,7 @@ html {
 
 .atributos {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
     gap: 10px;
 }
 
@@ -185,6 +210,12 @@ html {
     border-radius: 10px;
     padding: 10px;
     border: 2px solid white;
+    flex: 1; /* Faz com que todos os itens ocupem o mesmo espaço */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70px; /* Define uma largura fixa */
 }
 
 .atributo-box {
@@ -192,12 +223,316 @@ html {
     background-color: white;
     border: 2px solid red;
     border-radius: 10px;
-    padding: 10px;
+    padding: 5px 10px;
     color: white;
     font-size: 20px;
     font-weight: bold;
 }
 
 .atributo-box span {
-    color: black; /* Garantir que a cor do texto seja preta */
+    color: black;
+}
+
+/* Grid layout para a página da ficha do personagem */
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        "header header header header header header header header stats-container stats-container"
+        "header header header header header header header header stats-container stats-container"
+        "attributes attributes combate combate combate traits traits traits traits traits"
+        "attributes attributes combate combate combate traits traits traits traits traits"
+        "photo photo proficiencies proficiencies proficiencies traits traits traits traits traits"
+        "photo photo skills skills skills skills skills skills skills skills"
+        "photo photo skills skills skills skills skills skills skills skills"
+        "photo photo skills skills skills skills skills skills skills skills"
+        "photo photo skills skills skills skills skills skills skills skills"
+        "photo photo skills skills skills skills skills skills skills skills";
+    grid-gap: 10px;
+    width: 100%;
+}
+
+.grid-item {
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 10px;
+    opacity: 0.85;
+}
+
+.grid-item.header {
+    grid-area: header;
+    display: grid;
+    gap: 10px;
+}
+
+.grid-item.stats-container {
+    grid-area: stats-container;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 colunas */
+    grid-template-rows: repeat(2, auto); /* 2 linhas */
+    gap: 10px;
+    background-color: black;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.stats-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+.grid-item.attributes {
+    grid-area: attributes;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.fisicomental {
+    display: flex;
+    justify-content: space-around;
+}
+
+.grid-item.photo {
+    grid-area: photo;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 350px;
+}
+
+.grid-item.photo img {
+    max-width: 60%;
+    max-height: 100%;
+    border-radius: 10px;
+    height: 600px;
+}
+
+.grid-item.combate {
+    grid-area: combate;
+    background-color: black;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    opacity: 0.85;
+}
+
+.grid-item.combate p {
+    margin: 10px 0;
+}
+
+.grid-item.combate .atributo-combate {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    margin: 10px 0;
+}
+
+.vidaesquiva {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.vida-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    margin: 10px 0;
+    flex-direction: column;
+}
+
+.vida-container, .pm-container {
+    display: flex;
+    gap: 15px;
+}
+
+.vida-buttons, .pm-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.heal-button, .damage-button, .gain-button, .spend-button {
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 5px;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.heal-button:hover {
+    background-color: rgb(55, 214, 23);
+    color: white;
+}
+
+.damage-button:hover {
+    background-color: rgb(236, 15, 15);
+    color: white;
+}
+
+.gain-button:hover {
+    background-color: rgb(27, 74, 204);
+    color: white;
+}
+
+.spend-button:hover {
+    background-color: rgb(236, 15, 15);
+    color: white;
+}
+
+.vida-info, .pm-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.vida-current-max, .pm-current-max {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    font-weight: bold;
+}
+
+.vida-temp {
+    font-size: 1rem;
+    color: white;
+    font-weight: bold;
+}
+
+.vida-temp input, .pm-temp input {
+    color: black;
+    width: 30px;
+    background-color: transparent;
+    border: 2px solid white;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.vida-label, .pm-label {
+    margin-top: 0px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+}
+
+.vida-section span, .pm-section span {
+    color: white;
+}
+
+.pmarmadura {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.pm-container {
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.pm-label {
+    width: 10%;
+}
+.grid-item.proficiencies {
+    grid-area: proficiencies;
+}
+
+.proficiencies-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.proficiency-list {
+    list-style-type: disc;
+    padding: 0 20px;
+    width: 50%;
+}
+
+.grid-item.skills {
+    grid-area: skills;
+}
+
+.grid-item.traits {
+    grid-area: traits;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Alinhar conteúdo ao início */
+    align-items: stretch; /* Esticar para preencher a largura */
+    gap: 10px;
+    padding: 10px;
+    background-color: black;
+    border-radius: 10px;
+    border: 2px solid white;
+    opacity: 0.85;
+}
+
+.trait-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.trait-field textarea {
+    width: 95%;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    resize: none;
+}
+#save-traits-button {
+    background-color: black;
+    border: 2px solid white;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 4px 8px;
+    font-size: 16px;
+    margin: 0px 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#save-traits-button.visible {
+    display: inline-block;
+}
+#saved-button {
+    background-color: black;
+    border: 2px solid white;
+    display: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 4px 8px;
+    font-size: 16px;
+    margin: 0px 14px;
+    border-radius: 5px;
+    cursor: default;
+}
+
+#saved-button::after {
+    content: "✔";
+}
+.hidden {
+    display: none;
 }

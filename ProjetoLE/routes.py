@@ -1,15 +1,21 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, request
 from flask_login import login_user, logout_user, login_required, current_user
 from . import db
-from .models import db, User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda, Profissao, TipoSubClasse, Elemento, Vantagem, Resistencia, Pericia, Atributo, sub_ancestry_pericia, ancestry_pericia
-from .forms import RegistrationForm, LoginForm, CharacterForm, ProfissaoForm, AddColumnForm, ModifyColumnForm
+from .models import db, User, Character, Ancestry, SubAncestry, Estilo, Classe, SubClasse, Guilda, Profissao, TipoSubClasse, Elemento, Vantagem, Resistencia, Pericia, Atributo, sub_ancestry_pericia, ancestry_pericia, CharacterPericia
+from .forms import RegistrationForm, LoginForm, CharacterForm, AddColumnForm, ModifyColumnForm
 from flask_migrate import upgrade, migrate, init
 from sqlalchemy import inspect
-import os
+import os, logging
+from werkzeug.utils import secure_filename
 
 main = Blueprint('main', __name__)
 admin = Blueprint('admin', __name__, url_prefix='/admin')  # Definindo um nome único e prefixo para o blueprint admin
 
+logging.basicConfig(level=logging.DEBUG)
+
+UPLOAD_FOLDER = 'static/img/characters'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 def get_column_type(column_type):
     if column_type == 'String':
@@ -61,13 +67,27 @@ def perfil():
     characters = Character.query.filter_by(user_id=current_user.id).all()
     return render_template('perfil.html', name=current_user.username, characters=characters)
 
-@main.route('/ficha_personagem/<int:character_id>', methods=['GET'])
+@main.route('/ficha_personagem/<int:character_id>', methods=['GET', 'POST'])
 @login_required
 def ficha_personagem(character_id):
     character = Character.query.get_or_404(character_id)
+    
     if character.user_id != current_user.id:
         flash('Você não tem permissão para acessar esta ficha.')
         return redirect(url_for('main.homepage'))
+
+    if request.method == 'POST':
+        data = request.get_json()
+        try:
+            character.personalidade = data.get('personalidade', character.personalidade)
+            character.ideais = data.get('ideais', character.ideais)
+            character.objetivos = data.get('objetivos', character.objetivos)
+            character.defeitos_medos = data.get('defeitos_medos', character.defeitos_medos)
+            db.session.commit()
+            return jsonify(success=True)
+        except Exception as e:
+            db.session.rollback()
+            return jsonify(success=False, error=str(e))
 
     sub_classe1 = SubClasse.query.get(character.sub_classe1_id)
     sub_classe1_elemento = Elemento.query.get(sub_classe1.elemento_id) if sub_classe1 else None
@@ -83,12 +103,37 @@ def ficha_personagem(character_id):
         if elemento:
             vantagens.extend(Vantagem.query.filter_by(elemento_id=elemento.id).all())
             resistencias.extend(Resistencia.query.filter_by(elemento_id=elemento.id).all())
-    
+
+    proficiencias = character.classe.proficiencias  # Supondo que as proficiências estão relacionadas à classe do personagem
+
     vida = character.calcular_vida()
     pm = character.calcular_pm()
     proficiencia = character.calcular_proficiencia()
+
+    # Calcular o meio da lista de proficiências
+    prof_mid = len(proficiencias) // 2
     
-    return render_template('ficha_personagem.html', character=character, elementos=elementos, vantagens=vantagens, resistencias=resistencias, vida=vida, pm=pm, proficiencia=proficiencia)
+    return render_template('ficha_personagem.html', character=character, elementos=elementos, vantagens=vantagens, resistencias=resistencias, vida=vida, pm=pm, proficiencia=proficiencia, proficiencias=proficiencias, prof_mid=prof_mid)
+
+@main.route('/update_traits/<int:character_id>', methods=['POST'])
+@login_required
+def update_traits(character_id):
+    character = Character.query.get_or_404(character_id)
+    if character.user_id != current_user.id:
+        return jsonify(success=False, error="Unauthorized"), 403
+
+    data = request.get_json()
+    character.personalidade = data.get('personalidade')
+    character.ideais = data.get('ideais')
+    character.objetivos = data.get('objetivos')
+    character.defeitos_medos = data.get('defeitos_medos')
+
+    try:
+        db.session.commit()
+        return jsonify(success=True)
+    except Exception as e:
+        db.session.rollback()
+        return jsonify(success=False, error=str(e))
 
 @main.route('/homepage')
 def homepage():
@@ -102,35 +147,52 @@ def criarpersonagem():
         return render_template('criarpersonagem.html', form=form)
    
     if request.method == 'POST':
-        data = request.get_json()
-        print(f"Data received: {data}")
+        data = request.form
+        image_file = request.files['image']
+        
+        if image_file:
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(UPLOAD_FOLDER, filename)
+            image_file.save(image_path)
+        else:
+            filename = None
 
         try:
             character = Character(
                 name=data['name'],
                 user_id=current_user.id,
-                ancestry_id=data['ancestry_id'],
-                sub_ancestry_id=data['sub_ancestry_id'],
-                estilo_id=data['estilo_id'],
-                classe_id=data['classe_id'],
-                sub_classe1_id=data['sub_classe1_id'],
-                sub_classe2_id=data['sub_classe2_id'],
-                guilda_id=data['guilda_id'],
-                profissao_id=data['profissao_id'],
-                level=data.get('level', 1),
-                forca=data.get('forca', 1),
-                agilidade=data.get('agilidade', 1),
-                inteligencia=data.get('inteligencia', 1),
-                presenca=data.get('presenca', 1)
+                ancestry_id=data['ancestry'],
+                sub_ancestry_id=data['sub_ancestry'],
+                estilo_id=data['estilo'],
+                classe_id=data['classe'],
+                sub_classe1_id=data['sub_classe1'],
+                sub_classe2_id=data['sub_classe2'],
+                guilda_id=data['guilda'],
+                profissao_id=data['profissao'],
+                forca=data['forca'],
+                agilidade=data['agilidade'],
+                inteligencia=data['inteligencia'],
+                presenca=data['presenca'],
+                image=filename
             )
             db.session.add(character)
             db.session.commit()
+
+            for pericia_id in data.getlist('profissao_pericias'):
+                pericia_treinada = CharacterPericia(character_id=character.id, pericia_id=pericia_id)
+                db.session.add(pericia_treinada)
+
+            for pericia_id in data.getlist('ancestry_pericias'):
+                pericia_treinada = CharacterPericia(character_id=character.id, pericia_id=pericia_id)
+                db.session.add(pericia_treinada)
+            
+            db.session.commit()   
             return jsonify(success=True)
         except Exception as e:
             db.session.rollback()
             print(f"Error: {e}")
             return jsonify(success=False, error=str(e))
-
+        
 @main.route('/get_sub_ancestries/<int:ancestral_id>', methods=['GET'])
 @login_required
 def get_sub_ancestries(ancestral_id):

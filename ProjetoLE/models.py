@@ -35,7 +35,13 @@ sub_ancestry_pericia = db.Table('sub_ancestry_pericia',
     db.Column('pericia_id', db.Integer, db.ForeignKey('pericia.id'), primary_key=True)
 )
 
+proficiencia_classe = db.Table('proficiencia_classe',
+    db.Column('classe_id', db.Integer, db.ForeignKey('classe.id'), primary_key=True),
+    db.Column('proficiencia_id', db.Integer, db.ForeignKey('proficiencia.id'), primary_key=True)
+)
+
 class CharacterPericia(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     character_id = db.Column(db.Integer, db.ForeignKey('character.id'), primary_key=True)
     pericia_id = db.Column(db.Integer, db.ForeignKey('pericia.id'), primary_key=True)
     treinado = db.Column(db.Boolean, default=False)
@@ -43,7 +49,7 @@ class CharacterPericia(db.Model):
     character = db.relationship('Character', backref=db.backref('character_pericias', cascade='all, delete-orphan'))
     pericia = db.relationship('Pericia', backref=db.backref('character_pericias', cascade='all, delete-orphan'))
 
-class Character(db.Model):
+class Character(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -60,6 +66,11 @@ class Character(db.Model):
     agilidade = db.Column(db.Integer, nullable=False, default=1)
     inteligencia = db.Column(db.Integer, nullable=False, default=1)
     presenca = db.Column(db.Integer, nullable=False, default=1)
+    image = db.Column(db.String(200), nullable=True)
+    personalidade = db.Column(db.String(500), nullable=True)
+    ideais = db.Column(db.String(500), nullable=True)
+    objetivos = db.Column(db.String(500), nullable=True)
+    defeitos_medos = db.Column(db.String(500), nullable=True)
 
     ancestry = db.relationship('Ancestry', backref='characters')
     sub_ancestry = db.relationship('SubAncestry', backref='characters')
@@ -69,6 +80,7 @@ class Character(db.Model):
     sub_classe2 = db.relationship('SubClasse', foreign_keys=[sub_classe2_id])
     guilda = db.relationship('Guilda', backref='characters')
     profissao = db.relationship('Profissao', backref='characters')
+    pericia_treinada = db.relationship('CharacterPericia', backref='character_ref', lazy=True)
 
     def calcular_vida(self):
         return self.classe.vida_inicial + (self.level * self.classe.vida_por_nivel)
@@ -135,6 +147,7 @@ class Classe(db.Model):
     vida_por_nivel = db.Column(db.Integer, nullable=False, default=3)
     pm_inicial = db.Column(db.Integer, nullable=False, default=30)
     pm_por_nivel = db.Column(db.Integer, nullable=False, default=2)
+    proficiencias = db.relationship('Proficiencia', secondary=proficiencia_classe, backref=db.backref('classes', lazy=True))
     sub_classes1 = relationship('SubClasse', primaryjoin="foreign(Classe.type_id1)==SubClasse.tipo_id")
     sub_classes2 = relationship('SubClasse', primaryjoin="foreign(Classe.type_id2)==SubClasse.tipo_id")
 
@@ -188,3 +201,7 @@ class Pericia(db.Model):
     tipo_pericia_id = db.Column(db.Integer, db.ForeignKey('tipo_pericia.id'), nullable=False)
     ancestries = db.relationship('Ancestry', secondary=ancestry_pericia, back_populates='pericias')
     profissoes = db.relationship('Profissao', secondary=profissao_pericia, back_populates='pericias')
+
+class Proficiencia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
